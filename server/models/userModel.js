@@ -1,12 +1,12 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   name: String,
-  username: String,
+  username: { type: String, required: true, unique: true },
   dob: String,
-  email: String,
+  email: { type: String, required: true, unique: true },
   profile_img: String, //url of the image   |||Should think how we have store the image|||
-  password: String,
+  password: { type: String, required: true, unique: true },
   areaOfInterest: [], //array of String
   posts: [
     //array of objects
@@ -40,7 +40,12 @@ var userSchema = new mongoose.Schema({
         }
       ]
     }
-  ]
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now()
+  }
 });
 
-exports.User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', UserSchema);
+module.exports = User;
