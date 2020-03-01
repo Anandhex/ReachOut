@@ -5,6 +5,7 @@ class APIfeatures {
   }
 
   filter() {
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
     const queryObj = { ...this.queryStr };
     const exculededFields = ['page', 'sort', 'limit', 'fields'];
     exculededFields.forEach(el => delete queryObj[el]);
