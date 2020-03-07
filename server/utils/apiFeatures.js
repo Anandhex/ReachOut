@@ -11,14 +11,11 @@ class APIfeatures {
     exculededFields.forEach(el => delete queryObj[el]);
 
     let queryStr = JSON.stringify(queryObj);
-    queryStr = this.queryStr.replace(
-      /\b(gte|lte|gt|lt)\b/g,
-      match => `$${match}`
-    ); //returns a query object to which we can chain stuffs
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
 
     this.query = this.query.find(JSON.parse(queryStr));
 
-    return this;
+    return this; //returns a query object to which we can chain stuffs
   }
 
   sort() {
