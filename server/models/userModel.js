@@ -34,6 +34,7 @@ const UserSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
   areaOfInterest: [], //array of String
+  friends: [],
   createdAt: {
     type: Date,
     default: Date.now()
@@ -41,8 +42,15 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
+  next();
+});
+
+UserSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
@@ -51,7 +59,7 @@ UserSchema.methods.correctPassword = async function(passwordToMatch, password) {
 };
 
 UserSchema.methods.changedPasswordAfter = function(JWTTimeStamp) {
-  if (!this.passwordChangedAt) {
+  if (this.passwordChangedAt) {
     const changedTimeStamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
       10

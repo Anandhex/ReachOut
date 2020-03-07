@@ -43,3 +43,43 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   }
   res.status(201).json({ status: 'success', data: { user } });
 });
+
+exports.getFriends = catchAsync(async (req, res, next) => {
+  const friends = req.user.friends.map(friend => User.findOne({ _id: friend }));
+  res.status(200).json({ status: 'success', data: { friendList: friends } });
+});
+
+exports.addFriend = catchAsync(async (req, res, next) => {
+  const friend = await User.findById({ _id: req.params.userId });
+  if (!friend) {
+    return next(new AppError('No user with the particular ID exits', 404));
+  }
+  let user;
+  if (!req.user._id.equals(friend._id)) {
+    user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $push: { friends: friend._id }
+      },
+      { new: true }
+    );
+  }
+  res.status(200).json({ status: 'sucess', data: { user } });
+});
+
+exports.deleteFriend = catchAsync(async (req, res, next) => {
+  const friends = req.user.friends.filter(
+    friend => !friend.equals(req.params.userId)
+  );
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { friends } },
+    { new: true }
+  );
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user
+    }
+  });
+});

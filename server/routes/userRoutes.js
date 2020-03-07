@@ -1,16 +1,23 @@
 const express = require('express');
+
+const postRoutes = require('./postRoutes');
+
 const {
   getUsers,
   saveUser,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  addFriend,
+  getFriends,
+  deleteFriend
 } = require('../controllers/userController');
 const {
   signup,
   login,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  protect
 } = require('../controllers/authController');
 
 const router = express.Router();
@@ -25,9 +32,27 @@ router
   .route('/')
   .get(getUsers)
   .post(saveUser);
+
+router.route('/friends').get(protect, getFriends);
+
+router
+  .route('/friends/:userId')
+  .patch(protect, addFriend)
+  .delete(protect, deleteFriend);
+
 router
   .route('/:id')
   .get(getUser)
   .patch(updateUser)
   .delete(deleteUser);
+
+router.use(
+  '/:id/posts',
+  (req, res, next) => {
+    req.userId = req.params.id;
+    next();
+  },
+  postRoutes
+);
+
 module.exports = router;
