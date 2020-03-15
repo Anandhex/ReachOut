@@ -14,14 +14,17 @@ exports.getPosts = catchAsync(async (req, res, next) => {
 });
 
 exports.addPost = catchAsync(async (req, res, next) => {
-  req.body.userId = req.user._id;
-  const post = await Post.create(req.body);
-  res.status(201).json({ status: 'success', data: { post } });
+  req.body.userId = req.params.userId ? req.params.userId : req.user._id;
+  if (req.user._id.equals(req.body.userId)) {
+    const post = await Post.create(req.body);
+    res.status(201).json({ status: 'success', data: { post } });
+  } else {
+    next(new AppError('Unauthorized access', 403))
+  }
 });
 
 exports.updatePost = catchAsync(async (req, res, next) => {
   let post = await Post.findOne({ _id: req.params.postId });
-  console.log(req.user._id, post.userId);
   if (req.user._id.equals(post.userId)) {
     post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
       new: true
@@ -39,7 +42,7 @@ exports.deletePost = catchAsync(async (req, res, next) => {
     if (!post) {
       return next(new AppError('No post found with that ID', 404));
     }
-    res.status(201).json({ status: 'siccess', message: 'deleted' });
+    res.status(201).json({ status: 'success', message: 'deleted' });
   } else {
     next(new AppError('Unauthorized. Please login to update the post', 403));
   }

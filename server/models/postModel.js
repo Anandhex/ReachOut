@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   //array of objects
   userId: {
-    type: String,
-    required: true
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: [true, 'Post should belong the user']
   },
   postTitle: {
     type: String,
@@ -34,7 +35,15 @@ const postSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now }
     }
   ]
-});
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  });
+
+postSchema.pre(/^find/, function (next) {
+  // this.populate({ path: 'userId', select: 'name' })
+  next()
+})
 
 const Post = mongoose.model('Post', postSchema);
 

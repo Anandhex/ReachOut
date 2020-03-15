@@ -22,6 +22,9 @@ const {
 
 const router = express.Router();
 
+router.use('/:userId/posts', postRoutes);
+
+
 router.post('/signup', signup);
 router.post('/login', login);
 
@@ -46,13 +49,5 @@ router
   .patch(updateUser)
   .delete(deleteUser);
 
-router.use(
-  '/:id/posts',
-  (req, res, next) => {
-    req.userId = req.params.id;
-    next();
-  },
-  postRoutes
-);
 
 module.exports = router;
