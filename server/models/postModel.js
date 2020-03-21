@@ -23,17 +23,23 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  comments: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Comment'
+    }
+  ],
   createDate: { type: Date, default: Date.now },
 }, {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  });
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
 
-postSchema.virtual('comments', {
-  ref: 'Comment',
-  foreignField: 'postId',
-  localField: '_id'
-})
+// postSchema.virtual('comments', {
+//   ref: 'Comment',
+//   foreignField: 'postId',
+//   localField: '_id'
+// })
 
 postSchema.pre(/^find/, function (next) {
   // this.populate({ path: 'userId', select: 'name' })
