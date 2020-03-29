@@ -1,0 +1,15 @@
+.loader {
+  height: 3px;
+  width: 0;
+  animation: loader-loading 2s ease-in-out infinite alternate;
+  background-color: red;
+}
+
+@keyframes loader-loading {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100vw;
+  }
+}

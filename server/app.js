@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongooseSantize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -13,6 +14,8 @@ const app = express();
 // middlewares
 //http header
 app.use(helmet());
+
+app.use(cors());
 
 //setting rate limiter
 const limiter = rateLimit({

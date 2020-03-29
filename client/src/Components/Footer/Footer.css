@@ -1,0 +1,6 @@
+.Footer-container {
+  height: 8vh;
+  background: rgb(0, 162, 255);
+  padding: 1.1rem;
+  box-shadow: 0 50vh 0 50vh rgb(0, 162, 255);
+}

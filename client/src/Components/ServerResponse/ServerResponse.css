@@ -1,0 +1,27 @@
+.ServerResponse-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  width: fit-content;
+  height: 10vh;
+  transform: translate(40vw, -20vh);
+  background-color: ghostwhite;
+  opacity: 0;
+  border-radius: 8px;
+  animation: message-fade-in 1s ease-in-out forwards;
+}
+
+.ServerResponse-container span {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.5rem;
+}
+
+@keyframes message-fade-in {
+  to {
+    transform: translate(40vw, 30vh);
+    opacity: 1;
+  }
+}
