@@ -5,8 +5,10 @@ import "./SignUp.css";
 import ServerResponse from "../../Components/ServerResponse/ServerResponse";
 import { API_BASE_URL } from "../../util/apiUtil";
 import Loader from "../../Components/Loader/Loader";
+import { Redirect } from "react-router-dom";
+import jwt from "../../util/jwt";
 
-export class SignUp extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,11 +17,12 @@ export class SignUp extends Component {
       password: "",
       passwordConfirm: "",
       error: null,
-      isLoading: false
+      isLoading: false,
+      isBoarded: false,
     };
   }
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
   toggleLoadingState = () => {
@@ -42,17 +45,19 @@ export class SignUp extends Component {
           username,
           email,
           password,
-          passwordConfirm
+          passwordConfirm,
         })
-        .then(data => {
+        .then((resp) => {
           this.toggleLoadingState();
-          console.log(data);
+          const data = resp.data;
+          jwt.setJWt(data.token);
+          this.props.setUser(data.data.user);
         })
-        .catch(error => {
+        .catch((error) => {
           const { data } = error.response;
           this.setState(
             {
-              error: { message: data.message, messageType: "error" }
+              error: { message: data.message, messageType: "error" },
             },
             () => {
               this.toggleLoadingState();
@@ -66,13 +71,16 @@ export class SignUp extends Component {
         .post(api, {
           username,
           email,
-          password
+          password,
         })
-        .then(data => {
+        .then((resp) => {
           this.toggleLoadingState();
-          console.log(data);
+          const data = resp.data;
+          jwt.setJWt(data.token);
+          this.props.setUser(data.data.user);
+          this.setState({ isBoarded: data.data.user.isBoarded });
         })
-        .catch(error => {
+        .catch((error) => {
           let data;
           if (error.response) {
             data = error.response;
@@ -85,7 +93,7 @@ export class SignUp extends Component {
 
           this.setState(
             {
-              error: { message: data.message, messageType: "error" }
+              error: { message: data.message, messageType: "error" },
             },
             () => {
               this.toggleLoadingState();
@@ -96,7 +104,7 @@ export class SignUp extends Component {
     } else {
       this.setState(
         {
-          error: { message: "Enter all the fields", messageType: "error" }
+          error: { message: "Enter all the fields", messageType: "error" },
         },
         () => {
           this.toggleLoadingState();
@@ -108,119 +116,125 @@ export class SignUp extends Component {
   };
 
   render() {
-    return (
-      <>
-        {this.state.error ? <ServerResponse {...this.state.error} /> : ""}
-        {this.state.isLoading ? <Loader /> : ""}
-        {this.props.isSignIn ? (
-          <form className=" page SignUp-container">
-            <div className="SignUp-form">
-              <div className="SignUp-form-header">Create an Account!</div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="username">Username </label>
-                <input
-                  type="text"
-                  name="username"
-                  id="username"
-                  placeholder="john@doe"
-                  value={this.state.username}
-                  onChange={e => this.handleChange(e)}
-                />
+    if (localStorage.getItem("jwt")) {
+      if (!this.state.isBoarded) {
+        return <Redirect to="/selectInterst" />;
+      }
+      return <Redirect exact to="/" />;
+    } else
+      return (
+        <>
+          {this.state.error ? <ServerResponse {...this.state.error} /> : ""}
+          {this.state.isLoading ? <Loader /> : ""}
+          {this.props.isSignIn ? (
+            <form className=" page SignUp-container">
+              <div className="SignUp-form">
+                <div className="SignUp-form-header">Create an Account!</div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="username">Username </label>
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="john@doe"
+                    value={this.state.username}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="email">Email </label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="john@gmail.com"
+                    value={this.state.email}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="password">Password </label>
+                  <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    min="8"
+                    placeholder="password"
+                    value={this.state.password}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="passwordConfirm">Confirm Password </label>
+                  <input
+                    type="password"
+                    name="passwordConfirm"
+                    id="passwordConfirm"
+                    min="8"
+                    placeholder="confirm password"
+                    value={this.state.passwordConfirm}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-button">
+                  <input
+                    type="button"
+                    value="Sign Up"
+                    onClick={this.handleClick}
+                  />
+                </div>
               </div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="email">Email </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="john@gmail.com"
-                  value={this.state.email}
-                  onChange={e => this.handleChange(e)}
-                />
+            </form>
+          ) : (
+            <form className="SignUp-container">
+              <div className="SignUp-form">
+                <div className="SignUp-form-header">Log into Account!</div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="username">Username </label>
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="john@doe"
+                    value={this.state.username}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="email">Email </label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="john@gmail.com"
+                    value={this.state.email}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-input-field">
+                  <label htmlFor="password">Password </label>
+                  <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    min="8"
+                    placeholder="password"
+                    value={this.state.password}
+                    onChange={(e) => this.handleChange(e)}
+                  />
+                </div>
+                <div className="SignUp-form-button">
+                  <input
+                    type="button"
+                    value="log in"
+                    onClick={this.handleClick}
+                  />
+                </div>
               </div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="password">Password </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  min="8"
-                  placeholder="password"
-                  value={this.state.password}
-                  onChange={e => this.handleChange(e)}
-                />
-              </div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="passwordConfirm">Confirm Password </label>
-                <input
-                  type="password"
-                  name="passwordConfirm"
-                  id="passwordConfirm"
-                  min="8"
-                  placeholder="confirm password"
-                  value={this.state.passwordConfirm}
-                  onChange={e => this.handleChange(e)}
-                />
-              </div>
-              <div className="SignUp-form-button">
-                <input
-                  type="button"
-                  value="Sign Up"
-                  onClick={this.handleClick}
-                />
-              </div>
-            </div>
-          </form>
-        ) : (
-          <form className="SignUp-container">
-            <div className="SignUp-form">
-              <div className="SignUp-form-header">Log into Account!</div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="username">Username </label>
-                <input
-                  type="text"
-                  name="username"
-                  id="username"
-                  placeholder="john@doe"
-                  value={this.state.username}
-                  onChange={e => this.handleChange(e)}
-                />
-              </div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="email">Email </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="john@gmail.com"
-                  value={this.state.email}
-                  onChange={e => this.handleChange(e)}
-                />
-              </div>
-              <div className="SignUp-form-input-field">
-                <label htmlFor="password">Password </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  min="8"
-                  placeholder="password"
-                  value={this.state.password}
-                  onChange={e => this.handleChange(e)}
-                />
-              </div>
-              <div className="SignUp-form-button">
-                <input
-                  type="button"
-                  value="log in"
-                  onClick={this.handleClick}
-                />
-              </div>
-            </div>
-          </form>
-        )}
-      </>
-    );
+            </form>
+          )}
+        </>
+      );
   }
 }
 

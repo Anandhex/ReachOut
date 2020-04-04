@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "./NavBar.css";
-import { NavLink } from "react-router-dom";
-export class NavBar extends Component {
+import { NavLink, withRouter } from "react-router-dom";
+
+class NavBar extends Component {
   render() {
     return (
       <nav className="NavBar-nav-container">
@@ -37,6 +38,7 @@ export class NavBar extends Component {
               to="/logout"
               exact
               activeClassName="NavBar-nav-link-active"
+              // onClick={this.props.logout()}
             >
               Logout
             </NavLink>
@@ -47,4 +49,4 @@ export class NavBar extends Component {
   }
 }
 
-export default NavBar;
+export default withRouter(NavBar);

@@ -1,0 +1,11 @@
+.ProfileUpdate-img {
+  border-radius: 50%;
+}
+
+.ProfileUpdate {
+  align-items: center !important;
+}
+
+.ProfileUpdate-img-upload-container {
+  margin: 1rem;
+}

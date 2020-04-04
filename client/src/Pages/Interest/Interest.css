@@ -1,0 +1,53 @@
+.Interest-select-item-container {
+  margin: 2rem 17rem;
+  display: grid;
+  grid-template-columns: repeat(3, 33%);
+  justify-items: center;
+}
+.Interest-select-item-img {
+  width: 200px;
+  height: 100px;
+}
+
+.Interest-select-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.Interest-select-item p {
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: capitalize;
+  padding: 0.3rem;
+}
+.Interest-select-item-selected {
+  opacity: 0.3;
+}
+
+.Interest-arrow-next-page {
+  z-index: 2;
+  position: fixed;
+  right: 0;
+  top: 40%;
+  animation: arrow-in-out 1s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes arrow-in-out {
+  to {
+    transform: scale(0.5);
+  }
+}
+
+.Interest-select-item-heading-container {
+  text-align: center;
+}
+.Interest-select-item-heading {
+  padding: 1.3rem;
+  font-size: 2.4rem;
+  text-transform: capitalize;
+}
+.Interest-select-item-sub-heading {
+  font-size: 0.8rem;
+  margin-bottom: 2rem;
+  opacity: 0.7;
+}

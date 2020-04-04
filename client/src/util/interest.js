@@ -1,0 +1,16 @@
+export default [
+  "Cyberbullying",
+  "Drugs and alcohol abuse",
+  "gender-discrimination",
+  "government-policy",
+  "Illiteracy",
+  "Obesity and greed",
+  "Poverty",
+  "Racism",
+  "Religion",
+  "Single parenthood",
+  "Social life and the economy",
+  "Suicide and social media",
+  "Unemployment",
+  "war",
+];

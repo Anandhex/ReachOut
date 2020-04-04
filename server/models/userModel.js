@@ -45,6 +45,7 @@ const UserSchema = new mongoose.Schema(
         ref: 'User'
       }
     ],
+    isBoarded: { type: Boolean, default: false },
     createdAt: {
       type: Date,
       default: Date.now()
