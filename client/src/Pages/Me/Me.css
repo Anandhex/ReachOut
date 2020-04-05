@@ -1,0 +1,69 @@
+.Me-container {
+  height: 80vh;
+  width: 100vw;
+  display: flex;
+}
+
+.Me-side {
+  width: 15vw;
+  background-color: var(--secondary-color);
+  overflow: scroll;
+}
+
+.Me-main {
+  width: 80vw;
+}
+
+.Me-side-bar-section {
+  padding: 1.8rem;
+}
+
+.Me-side-bar-section-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  font-variant: small-caps;
+}
+
+.Me-side-bar-sub-section div {
+  padding-top: 0.6rem;
+  padding-left: 0.3rem;
+  position: relative;
+  transition: color, font-size ease-in-out 0.3s;
+}
+
+.Me-side-bar-sub-section div:hover::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  bottom: -7%;
+  left: 3%;
+  border: 1px solid var(--primary-color);
+  animation: border-in 1s ease-in-out forwards;
+}
+
+@keyframes border-in {
+  to {
+    width: 70%;
+  }
+}
+
+.Me-side-bar-sub-section-active {
+  font-size: 1.3rem;
+  color: white !important;
+  border-bottom: 4px solid var(--primary-color);
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  opacity: 0;
+  animation: fade-in ease-in 1s forwards;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}

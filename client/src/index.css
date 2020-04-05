@@ -6,4 +6,7 @@
   margin: 0;
   padding: 0;
   font-family: "Libre Franklin", sans-serif;
+  --primary-color: #00203fff;
+  --secondary-color: #adefd1ff;
+  --primary-text-color: white;
 }

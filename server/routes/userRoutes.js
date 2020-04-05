@@ -10,7 +10,8 @@ const {
   deleteUser,
   addFriend,
   getFriends,
-  deleteFriend
+  deleteFriend,
+  uploadProfileImg
 } = require('../controllers/userController');
 const {
   signup,
@@ -36,7 +37,7 @@ router
   .post(saveUser);
 
 router.route('/friends').get(protect, getFriends);
-
+router.route('/profileUpload').post(protect, uploadProfileImg);
 router
   .route('/friends/:userId')
   .patch(protect, addFriend)
@@ -45,7 +46,7 @@ router
 router
   .route('/:id')
   .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+  .patch(protect, updateUser);
+// .delete(deleteUser);
 
 module.exports = router;

@@ -27,14 +27,28 @@
 .Interest-arrow-next-page {
   z-index: 2;
   position: fixed;
+  cursor: pointer;
   right: 0;
   top: 40%;
   animation: arrow-in-out 1s ease-in-out infinite alternate-reverse;
 }
-
+.Interest-arrow-previous-page {
+  z-index: 2;
+  position: fixed;
+  cursor: pointer;
+  left: 0;
+  top: 40%;
+  transform: rotate(180deg);
+  animation: arrow-in 1s ease-in-out infinite 1s alternate-reverse;
+}
+@keyframes arrow-in {
+  to {
+    transform: rotate(180deg) translateX(2rem) scale(0.5);
+  }
+}
 @keyframes arrow-in-out {
   to {
-    transform: scale(0.5);
+    transform: scale(0.5) translateX(2rem);
   }
 }
 

@@ -1,7 +1,7 @@
 .NavBar-nav-container {
   display: flex;
   justify-content: space-between;
-  background: rgb(0, 162, 255);
+  background: var(--primary-color);
 
   padding: 1.1rem;
   position: sticky;
@@ -9,13 +9,13 @@
 }
 .NavBar-nav-container a {
   text-decoration: none;
-  color: black;
+  color: var(--secondary-color);
   font-weight: 900;
   text-shadow: 0px 0px 1px;
   transition: all 0.5s ease-in-out;
 }
 .NavBar-nav-link-active {
-  color: white !important;
+  color: var(--primary-text-color) !important;
   text-shadow: none !important;
 }
 .NavBar-nav-left {
@@ -27,4 +27,20 @@
 .NavBar-nav-left a,
 .NavBar-nav-right a {
   margin-left: 0.7rem;
+}
+
+.NavBar-nav-right-user-signed {
+  display: flex;
+}
+.NavBar-user-profile-img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+
+.NavBar-nav-profile-active {
+  position: relative;
+  top: -0.2rem;
+  border-radius: 50%;
+  border: 2px solid white;
 }

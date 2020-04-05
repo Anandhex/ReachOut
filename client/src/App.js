@@ -9,6 +9,10 @@ import SignUp from "./Pages/SignUp/SignUp";
 import Logout from "./Pages/Logout/Logout";
 import Interest from "./Pages/Interest/Interest";
 import ProfileUpdate from "./Pages/ProfileUpdate/ProfileUpdate";
+import jwt from "./util/jwt";
+import axios from "axios";
+import { API_BASE_URL } from "./util/apiUtil";
+import Me from "./Pages/Me/Me";
 
 class App extends Component {
   constructor(props) {
@@ -18,19 +22,23 @@ class App extends Component {
       jwt: null,
     };
   }
+  componentDidMount() {
+    if (jwt.getJWT()) {
+      let api = API_BASE_URL + "users/";
+      axios.get(`${api}/${jwt.getId()}`).then((resp) => {
+        this.setState({ user: resp.data.data.user });
+        jwt.setBoarded(resp.data.data.user.isBoarded);
+      });
+    }
+  }
 
   setJWTToken = (jwt) => {
-    console.log(jwt);
     this.setState({ jwt });
   };
   setUser = (user) => {
-    console.log(user);
     this.setState({ user });
   };
 
-  isAuthenticated = () => {
-    return this.state.user && this.state.jwt;
-  };
   handleLogout = () => {
     this.setState({ user: null, jwt: null });
   };
@@ -63,7 +71,6 @@ class App extends Component {
                 isSignIn={false}
                 setJWTToken={this.setJWTToken}
                 setUser={this.setUser}
-                isAuthenticated={this.isAuthenticated}
                 {...routeParams}
               />
             )}
@@ -76,7 +83,20 @@ class App extends Component {
             )}
           />
           <Route exact path="/selectInterst" component={Interest} />
-          <Route exact path="/profileUpdate" component={ProfileUpdate} />
+          <Route
+            exact
+            path="/profileUpdate"
+            render={(routeParams) => (
+              <ProfileUpdate setUser={this.setUser} {...routeParams} />
+            )}
+          />
+          <Route
+            exact
+            path="/me"
+            render={(routeParams) => (
+              <Me user={this.state.user} {...routeParams} />
+            )}
+          />
           <Route path="*">
             <Error />
           </Route>

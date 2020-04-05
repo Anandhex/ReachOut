@@ -1,5 +1,7 @@
 .ProfileUpdate-img {
   border-radius: 50%;
+  width: 200px;
+  height: 200px;
 }
 
 .ProfileUpdate {
@@ -8,4 +10,30 @@
 
 .ProfileUpdate-img-upload-container {
   margin: 1rem;
+  position: relative;
+}
+
+input[type="file"],
+.label-update-image {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  color: var(--primary-text-color);
+  font-size: 900;
+  background-color: var(--primary-color);
+  padding: 10px;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  transition: all ease-in-out 1s;
+}
+Input[type="file"] {
+  visibility: hidden;
+}
+
+input[type="file"]:hover,
+.label-update-image:hover {
+  opacity: 0;
 }

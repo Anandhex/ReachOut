@@ -2,6 +2,48 @@ const User = require('../models/userModel');
 const APIfeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const AWS = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const path = require('path');
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  Bucket: 'reachout-media'
+});
+
+const imageUpload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'reachout-media/profile',
+    acl: 'public-read',
+    key: function(req, file, cb) {
+      cb(
+        null,
+        path.basename(file.originalname, path.extname(file.originalname)) +
+          '-' +
+          Date.now() +
+          path.extname(file.originalname)
+      );
+    }
+  }),
+  limits: { fileSize: 500000 },
+  fileFilter: function(req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).single('profileImage');
+
+function checkFileType(file, cb) {
+  const fileTypes = /jpeg|jpg|png|gif/;
+  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = fileTypes.test(file.mimetype);
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb('Error: Images Only!');
+  }
+}
 
 exports.getUsers = catchAsync(async (req, res, next) => {
   const features = new APIfeatures(User.find(), req.query)
@@ -36,12 +78,16 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateUser = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true
-  });
-  if (!user) {
+  let user;
+  if (req.user._id) {
+    user = await User.findByIdAndUpdate(req.user._id, req.body, {
+      new: true,
+      runValidators: true
+    });
+  } else if (!user) {
     return next(new AppError('No user found with that ID', 404));
+  } else {
+    return next(new AppError('Unauthorized access', 403));
   }
   res.status(201).json({ status: 'success', data: { user } });
 });
@@ -84,4 +130,41 @@ exports.deleteFriend = catchAsync(async (req, res, next) => {
       user
     }
   });
+});
+
+exports.uploadProfileImg = catchAsync(async (req, res, next) => {
+  imageUpload(
+    req,
+    res,
+    catchAsync(async error => {
+      if (error) {
+        console.log(error);
+        next(new AppError(error, 400));
+      } else {
+        if (req.file === undefined) {
+          console.log('no file selected');
+          next(new AppError('File not uploaded', 400));
+        } else {
+          const imageName = req.file.key;
+          const imageLocation = req.file.location;
+          const user = await User.findByIdAndUpdate(
+            req.user.id,
+            {
+              profile_img: imageLocation
+            },
+            {
+              new: true
+            }
+          );
+          if (!user) {
+            next(new AppError('Something went wrong!', 500));
+          }
+          res.status(201).json({
+            status: 'success',
+            data: { user }
+          });
+        }
+      }
+    })
+  );
 });

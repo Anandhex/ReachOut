@@ -1,0 +1,56 @@
+.Profile-image-me {
+  border-radius: 50%;
+  border: 5px solid var(--primary-color);
+}
+
+.MeSection-container {
+  margin-top: 1.5rem;
+}
+
+.Profile-username-me {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--primary-color);
+  font-variant: small-caps;
+  margin-top: 1.2rem;
+  text-align: center;
+}
+
+.Profile-image-me-container {
+  display: flex;
+  justify-content: center;
+}
+
+.Profile-username-dashboard-stats-container {
+  display: flex;
+  justify-content: center;
+  background-color: var(--primary-color);
+  margin: 1.2rem;
+  border-top-left-radius: 25%;
+  border-top-right-radius: 25%;
+  padding-top: 20px;
+  box-shadow: 0px 8px 10px 5px var(--secondary-color);
+}
+.Profile-username-dashboard-stats-container div {
+  padding: 0.5rem 1.2rem;
+  color: var(--secondary-color);
+}
+.Profile-username-dashboard-stats-container div div {
+  text-align: center;
+  font-variant: small-caps;
+}
+.dashboard-dislikes {
+  color: tomato !important;
+}
+
+.dashboard-top-posts-header {
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 700;
+  font-size: 1.5rem;
+  font-variant: small-caps;
+  text-decoration: underline;
+}
+.dashboard-top-posts-container {
+  margin-top: 1.2rem;
+}

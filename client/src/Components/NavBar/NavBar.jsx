@@ -5,7 +5,7 @@ import { NavLink, withRouter } from "react-router-dom";
 class NavBar extends Component {
   render() {
     return (
-      <nav className="NavBar-nav-container">
+      <nav className="NavBar-nav-container ">
         <div className="NavBar-nav-left">
           <li>Logo</li>
           <NavLink to="/" exact activeClassName="NavBar-nav-link-active">
@@ -34,14 +34,32 @@ class NavBar extends Component {
               </NavLink>
             </>
           ) : (
-            <NavLink
-              to="/logout"
-              exact
-              activeClassName="NavBar-nav-link-active"
-              // onClick={this.props.logout()}
-            >
-              Logout
-            </NavLink>
+            <div className="NavBar-nav-right-user-signed">
+              <NavLink
+                to="/me"
+                exact
+                activeClassName="NavBar-nav-profile-active"
+              >
+                <img
+                  className="NavBar-user-profile-img"
+                  src={`${
+                    this.props.user.profile_img &&
+                    this.props.user.profile_img !== "default"
+                      ? this.props.user.profile_img
+                      : "/images/default_profile/default.png"
+                  }`}
+                  alt="profile_img"
+                />
+              </NavLink>
+              <NavLink
+                to="/logout"
+                exact
+                activeClassName="NavBar-nav-link-active"
+                // onClick={this.props.logout()}
+              >
+                Logout
+              </NavLink>
+            </div>
           )}
         </div>
       </nav>
