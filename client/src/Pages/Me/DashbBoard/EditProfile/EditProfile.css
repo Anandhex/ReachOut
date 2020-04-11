@@ -1,0 +1,32 @@
+.edit-profile-tabbar {
+  display: flex;
+  width: 70vw !important;
+  justify-content: start;
+  width: fit-content;
+  margin-top: 1rem;
+}
+.edit-profile-tabbar div {
+  padding: 10px;
+  border-bottom: 1px solid var(--primary-color);
+  transition: all 0.3s ease-in-out;
+}
+.edit-profile-tab-active {
+  border: 2px solid var(--primary-color);
+  border-top: 3px solid #ff5050 !important;
+  border-bottom: 2px solid white !important;
+  box-shadow: 1px 3px 9px -6px var(--secondary-color) inset,
+    0px 15px 3px -2px white;
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+  z-index: 2;
+  color: var(--primary-color);
+}
+
+.tab {
+  position: relative;
+  top: -2px;
+  width: 80vw;
+  border: 2px solid var(--primary-color);
+  border-radius: 10px;
+  box-shadow: 1px 2px 14px -4px var(--secondary-color) inset;
+}

@@ -108,7 +108,9 @@ exports.protect = catchAsync(async (req, res, next) => {
 // }
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  const user = await User.find({ email: req.body.email });
+  console.log(User.schema.methods);
+  const user = await User.findOne({ email: req.body.email });
+  console.log(user);
   if (!user) {
     return next(new AppError('No user with that email address', 404));
   }

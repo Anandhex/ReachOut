@@ -36,7 +36,7 @@ class App extends Component {
     this.setState({ jwt });
   };
   setUser = (user) => {
-    this.setState({ user });
+    this.setState({ user: { ...user } });
   };
 
   handleLogout = () => {
@@ -94,7 +94,11 @@ class App extends Component {
             exact
             path="/me"
             render={(routeParams) => (
-              <Me user={this.state.user} {...routeParams} />
+              <Me
+                user={this.state.user}
+                {...routeParams}
+                setUser={this.setUser}
+              />
             )}
           />
           <Route path="*">

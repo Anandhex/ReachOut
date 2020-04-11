@@ -37,7 +37,9 @@ export class Me extends Component {
       case "Me":
         return <MeSection user={this.props.user} />;
       case "Edit Profile":
-        return <EditProfile user={this.props.user} />;
+        return (
+          <EditProfile user={this.props.user} setUser={this.props.setUser} />
+        );
       case "Friends":
         return <Friends user={this.props.user} />;
       case "Posts":

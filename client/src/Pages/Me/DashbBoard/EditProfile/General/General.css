@@ -1,0 +1,59 @@
+.tab .label-update-image {
+  width: 12.4rem;
+}
+
+.profile-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 25vw;
+}
+
+.profile-input-container {
+  font-variant: small-caps;
+}
+.profile-input div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+.General-container {
+  display: flex;
+  justify-content: center;
+}
+.profile-input-container input {
+  outline: none;
+  border: none;
+  width: 14vw;
+  border-bottom: 1px solid black;
+}
+
+.profile-input-container input:focus {
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.profile-input-container input:read-only {
+  color: gray !important;
+}
+.btn-update-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.btn-update {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-bottom: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 1px 2px 3px 2px var(--secondary-color);
+}
+
+.btn-update:hover {
+  transform: scale(1.2);
+  box-shadow: 1px 0px 2px 3px var(--secondary-color);
+}

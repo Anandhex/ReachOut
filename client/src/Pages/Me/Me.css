@@ -1,17 +1,23 @@
 .Me-container {
-  height: 80vh;
+  /* height: 80vh; */
   width: 100vw;
-  display: flex;
+  display: grid;
+  overflow: scroll;
+  grid-template-areas: "side main";
 }
 
 .Me-side {
   width: 15vw;
   background-color: var(--secondary-color);
   overflow: scroll;
+  height: 100%;
+  position: relative;
+  grid-area: side;
 }
 
 .Me-main {
   width: 80vw;
+  grid-area: main;
 }
 
 .Me-side-bar-section {
@@ -55,8 +61,8 @@
 
 .page {
   display: flex;
-  justify-content: center;
   align-items: center;
+  min-height: 80vh;
   flex-direction: column;
   opacity: 0;
   animation: fade-in ease-in 1s forwards;
