@@ -1,12 +1,12 @@
 const nodemailer = require('nodemailer');
-
+const htmlToText = require('html-to-text');
 exports.sendMail = async options => {
+  console.log('here');
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    service: 'gmail',
     auth: {
       user: process.env.EMAIL_USERNAME,
-      password: process.env.EMAIL_PASSWORD
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 
@@ -15,7 +15,15 @@ exports.sendMail = async options => {
     to: options.email,
     subject: options.subject,
     text: options.message
-    // html:
+    // html
+    // text: htmlToText.fromString(
+    //   <form method="POST">
+    //     Password:
+    //     <input type="password" name="password" />
+    //     Confirm Password:
+    //     <input type="password" name="passwordConfirm" />
+    //   </form>
+    // )
   };
 
   await transporter.sendMail(mailOptions);

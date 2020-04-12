@@ -93,31 +93,32 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.getFriends = catchAsync(async (req, res, next) => {
-  const friends = req.user.friends.map(friend => User.findOne({ _id: friend }));
-  res.status(200).json({ status: 'success', data: { friendList: friends } });
+  let friends = req.user.friends;
+  friends = await User.find({ _id: { $in: friends } });
+  res.status(200).json({ status: 'success', data: { data: friends } });
 });
 
 exports.addFriend = catchAsync(async (req, res, next) => {
-  const friend = await User.findById({ _id: req.params.userId });
+  const friend = await User.findById({ _id: req.body.userId });
   if (!friend) {
     return next(new AppError('No user with the particular ID exits', 404));
   }
   let user;
   if (!req.user._id.equals(friend._id)) {
-    user = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        $push: { friends: friend._id }
-      },
-      { new: true }
-    );
+    user = req.user;
+    if (!user.friends.includes(req.body.userId)) {
+      user.friends.push(req.body.userId);
+      user = await User.findByIdAndUpdate(req.user._id, user, { new: true });
+    } else {
+      return next(new AppError('User have already added them as friend', 400));
+    }
   }
-  res.status(200).json({ status: 'sucess', data: { user } });
+  res.status(200).json({ status: 'success', data: { user } });
 });
 
 exports.deleteFriend = catchAsync(async (req, res, next) => {
   const friends = req.user.friends.filter(
-    friend => !friend.equals(req.params.userId)
+    friend => friend != req.params.userId
   );
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -130,6 +131,12 @@ exports.deleteFriend = catchAsync(async (req, res, next) => {
       user
     }
   });
+});
+
+exports.getFriendsRecommendationList = catchAsync(async (req, res, next) => {
+  req.user.friends.push(req.user._id);
+  const recommendation = await User.find({ _id: { $nin: req.user.friends } });
+  res.status(200).json({ data: recommendation });
 });
 
 exports.uploadProfileImg = catchAsync(async (req, res, next) => {
