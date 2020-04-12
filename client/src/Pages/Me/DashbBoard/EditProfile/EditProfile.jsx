@@ -3,6 +3,7 @@ import "./EditProfile.css";
 import General from "./General/General";
 import Preference from "./Preference/Preference";
 import ChangePassword from "./ChangePassword/ChangePassword";
+import Error from "../../../Error/Error";
 export class EditProfile extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +41,8 @@ export class EditProfile extends Component {
         );
       case "Change Password":
         return <ChangePassword user={this.props.user} />;
+      default:
+        return <Error />;
     }
   };
 

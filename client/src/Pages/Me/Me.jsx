@@ -5,6 +5,7 @@ import EditProfile from "./DashbBoard/EditProfile/EditProfile";
 import Friends from "./DashbBoard/Friends/Friends";
 import Posts from "./DashbBoard/Posts/Posts";
 import Saved from "./DashbBoard/Saved/Saved";
+import Error from "../Error/Error";
 
 export class Me extends Component {
   constructor(props) {
@@ -52,6 +53,8 @@ export class Me extends Component {
         return <Posts user={this.props.user} />;
       case "Saved":
         return <Saved user={this.props.user} />;
+      default:
+        return <Error />;
     }
   };
 

@@ -98,6 +98,7 @@ export class Preference extends Component {
           <div className="Interest-select-item-container">
             {interests.map((interest, idx) => (
               <div
+                key={interest}
                 className={`Interest-select-item ${
                   this.state.selected[idx]
                     ? "Interest-select-item-selected"

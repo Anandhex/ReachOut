@@ -111,3 +111,32 @@
   opacity: 1;
   transform: scale(1.1);
 }
+
+.top-interests {
+  position: absolute;
+  right: 16vw;
+  top: 8vw;
+}
+.top-interests-header {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  font-variant: small-caps;
+  margin-bottom: 1rem;
+}
+
+.top-interests-follow {
+  padding: 10px;
+  font-size: 1rem;
+  text-align: right;
+  position: relative;
+}
+.top-interests-follow::after {
+  content: "";
+  width: 10px;
+  margin-left: 10px;
+  position: absolute;
+  height: 10px;
+  background-color: #ff5050;
+  border-radius: 50%;
+  top: 0.95rem;
+}

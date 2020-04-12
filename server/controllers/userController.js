@@ -106,8 +106,8 @@ exports.addFriend = catchAsync(async (req, res, next) => {
   let user;
   if (!req.user._id.equals(friend._id)) {
     user = req.user;
-    if (!user.friends.includes(req.body.userId)) {
-      user.friends.push(req.body.userId);
+    if (!user.friends.includes(friend._id)) {
+      user.friends.push(friend._id);
       user = await User.findByIdAndUpdate(req.user._id, user, { new: true });
     } else {
       return next(new AppError('User have already added them as friend', 400));

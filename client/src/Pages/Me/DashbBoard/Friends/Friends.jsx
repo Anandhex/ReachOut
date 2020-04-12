@@ -4,15 +4,24 @@ import { API_BASE_URL } from "../../../../util/apiUtil";
 import axios from "axios";
 import jwt from "../../../../util/jwt";
 import { getUserProfileImage } from "../../../../util/commonMethods";
+import Loader from "../../../../Components/Loader/Loader";
 export class Friends extends Component {
   constructor(props) {
     super(props);
     this.state = {
       friends: [],
+      isLoading: false,
     };
   }
   componentDidMount() {
-    this.setState({ friends: this.props.user.friends });
+    const api = API_BASE_URL + `users/friends`;
+    const headers = jwt.getAuthHeader();
+    axios
+      .get(api, { headers })
+      .then(({ data }) => {
+        this.setState({ friends: data.data.data });
+      })
+      .catch((err) => console.log(err));
   }
   showUserProfile = (e, id) => {
     e.stopPropagation();
@@ -20,12 +29,16 @@ export class Friends extends Component {
   };
   removeFriend = (e, id) => {
     e.stopPropagation();
+    this.setState({ isLoading: true });
     const headers = jwt.getAuthHeader();
     const api = API_BASE_URL + `users/friends/${id}`;
     axios
       .delete(api, { headers })
       .then((resp) => {
-        this.setState({ friends: resp.data.data.user.friends });
+        this.setState({
+          friends: resp.data.data.user.friends,
+          isLoading: false,
+        });
         this.props.setUser(resp.data.data.user);
       })
       .catch((err) => console.log(err));
@@ -54,13 +67,16 @@ export class Friends extends Component {
   };
   render() {
     return (
-      <div className="page">
-        {this.state.friends.length ? (
-          <div className="friends-container">{this.renderFriends()}</div>
-        ) : (
-          <div className="empty-friends">No Friends Added </div>
-        )}
-      </div>
+      <>
+        {this.state.isLoading ? <Loader /> : ""}
+        <div className="page">
+          {this.state.friends.length ? (
+            <div className="friends-container">{this.renderFriends()}</div>
+          ) : (
+            <div className="empty-friends">No Friends Added </div>
+          )}
+        </div>
+      </>
     );
   }
 }

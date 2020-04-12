@@ -1,8 +1,8 @@
 export default [
   "Cyberbullying",
   "Drugs and alcohol abuse",
-  "gender-discrimination",
-  "government-policy",
+  "Gender-discrimination",
+  "Government-policy",
   "Illiteracy",
   "Obesity and greed",
   "Poverty",
@@ -12,5 +12,5 @@ export default [
   "Social life and the economy",
   "Suicide and social media",
   "Unemployment",
-  "war",
+  "War",
 ];

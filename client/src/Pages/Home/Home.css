@@ -4,8 +4,9 @@
 
 .friend-container {
   display: flex;
-  width: 100%;
-  margin-top: 1rem;
+  width: 70vw;
+  margin: 1rem 0rem;
+  padding: 10px;
   overflow-y: scroll;
   justify-content: flex-start;
 }
@@ -58,4 +59,23 @@
 .friend-footer {
   display: flex;
   justify-content: space-evenly;
+}
+
+.post-content-container {
+  width: 54vw;
+  height: 16vw;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 10px;
+}
+
+.post-content-container:focus,
+.post-content-container:hover {
+  border: 5px solid var(--secondary-color);
+  outline: none;
+}
+
+.option-category {
+  text-transform: uppercase;
 }

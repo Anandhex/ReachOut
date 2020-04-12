@@ -28,7 +28,6 @@ export class Interest extends Component {
 
   nextPage = () => {
     if (this.state.selected.filter((interest) => interest).length) {
-      console.log(this.state.selected);
       this.props.history.push({
         pathname: "/profileUpdate",
         state: {
@@ -71,6 +70,7 @@ export class Interest extends Component {
         <div className="Interest-select-item-container">
           {interests.map((interest, idx) => (
             <div
+              key={interest}
               className={`Interest-select-item ${
                 this.state.selected[idx] ? "Interest-select-item-selected" : ""
               }`}
