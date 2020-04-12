@@ -1,2 +1,61 @@
 .Home-container {
+  width: 100vw;
+}
+
+.friend-container {
+  display: flex;
+  width: 100%;
+  margin-top: 1rem;
+  overflow-y: scroll;
+  justify-content: flex-start;
+}
+
+.friend-image img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+.friend-single {
+  margin: 0.8rem;
+  padding: 10px;
+  border-radius: 6px;
+  transition: all 0.4s ease-in;
+  box-shadow: 0px 0px 4px -2px var(--primary-color) inset;
+}
+
+.friend-single:hover {
+  opacity: 0.5;
+}
+.friend-container:hover > .friend-single,
+.friends-container:hover > .friend-single {
+  opacity: 0.5;
+}
+
+.friend-container:hover > .friend-single:hover,
+.friends-container:hover > .friend-single:hover {
+  opacity: 1;
+  box-shadow: 1px 1px 13px -2px var(--primary-color);
+}
+
+.friend-username {
+  font-variant: small-caps;
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.btn-add {
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.btn-cancel {
+  padding: 2px;
+  border-radius: 8px;
+}
+.friend-footer {
+  display: flex;
+  justify-content: space-evenly;
 }

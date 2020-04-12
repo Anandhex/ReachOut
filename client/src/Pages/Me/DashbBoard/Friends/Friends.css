@@ -1,0 +1,15 @@
+.friends-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.empty-friends {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80vw;
+  height: 60vh;
+  font-variant: small-caps;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}

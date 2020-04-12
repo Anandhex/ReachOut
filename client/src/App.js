@@ -13,6 +13,7 @@ import jwt from "./util/jwt";
 import axios from "axios";
 import { API_BASE_URL } from "./util/apiUtil";
 import Me from "./Pages/Me/Me";
+import MeSection from "./Pages/Me/DashbBoard/MeSection/MeSection";
 
 class App extends Component {
   constructor(props) {
@@ -50,7 +51,13 @@ class App extends Component {
       <>
         <NavBar user={this.state.user} logout={this.handleLogout} />
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route
+            exact
+            path="/"
+            render={(routeParams) => (
+              <Home setUser={this.setUser} {...routeParams} />
+            )}
+          />
           <Route
             exact
             path="/signup"
@@ -100,6 +107,11 @@ class App extends Component {
                 setUser={this.setUser}
               />
             )}
+          />
+          <Route
+            exact
+            path="/user/:id"
+            render={(routeParams) => <MeSection {...routeParams} />}
           />
           <Route path="*">
             <Error />

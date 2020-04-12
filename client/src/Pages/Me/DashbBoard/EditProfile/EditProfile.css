@@ -1,7 +1,7 @@
 .edit-profile-tabbar {
   display: flex;
   width: 70vw !important;
-  justify-content: start;
+  justify-content: flex-start;
   width: fit-content;
   margin-top: 1rem;
 }

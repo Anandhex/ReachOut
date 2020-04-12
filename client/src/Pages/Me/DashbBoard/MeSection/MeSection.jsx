@@ -2,37 +2,15 @@ import React, { Component } from "react";
 import "./MeSection.css";
 import { getUserProfileImage } from "../../../../util/commonMethods";
 import $ from "jquery";
+import { API_BASE_URL } from "../../../../util/apiUtil";
+import axios from "axios";
 
 export class MeSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      posts: [
-        {
-          postTitle: "How thing works",
-          postContent:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-          likes: 20,
-          dislikes: 10,
-          comments: [{ username: "Anandhex", commentText: "things working" }],
-        },
-        {
-          postTitle: "Shit thing works",
-          postContent:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-          likes: 20,
-          dislikes: 10,
-          comments: [{ username: "Anandhex", commentText: "things working" }],
-        },
-        {
-          postTitle: "what thing works",
-          postContent:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-          likes: 20,
-          dislikes: 10,
-          comments: [{ username: "Anandhex", commentText: "things working" }],
-        },
-      ],
+      user: null,
+      posts: [],
     };
   }
   componentDidMount() {
@@ -49,6 +27,17 @@ export class MeSection extends Component {
         }
       );
     });
+    let userId = this.props.user;
+    if (!userId) {
+      userId = this.props.match && this.props.match.params.id;
+    }
+    if (userId) {
+      const api = API_BASE_URL + `users/${userId}`;
+      axios
+        .get(api)
+        .then((resp) => this.setState({ user: resp.data.data.user }))
+        .catch((err) => console.log(err));
+    }
   }
 
   renderTopPosts = () => {
@@ -105,14 +94,16 @@ export class MeSection extends Component {
         <div className="MeSection-container">
           <div className="Profile-image-me-container">
             <img
-              // src={getUserProfileImage(this.props.user.profile_img)}
+              src={getUserProfileImage(
+                this.state.user && this.state.user.profile_img
+              )}
               src="/images/default_profile/default.png"
               alt="profile_img"
               className="Profile-image-me"
             />
           </div>
           <div className="Profile-username-me">
-            {"this.props.user.username"}
+            {this.state.user && this.state.user.username}
           </div>
           <div className="Profile-username-dashboard-stats-container">
             <div className="dashboard-stats">
