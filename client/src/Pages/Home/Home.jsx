@@ -7,6 +7,7 @@ import { getUserProfileImage } from "../../util/commonMethods";
 import jwt from "../../util/jwt";
 import Loader from "../../Components/Loader/Loader";
 import interests from "../../util/interest";
+import Post from "../../Components/Post/Post";
 class Welcome extends Component {
   constructor(props) {
     super(props);
@@ -16,11 +17,13 @@ class Welcome extends Component {
       postTitle: "",
       category: interests[0],
       isLoading: false,
+      showMore: false,
+      posts: [],
     };
   }
   componentDidMount() {
     this.setState({ isLoading: true });
-    const api = API_BASE_URL + "users";
+    let api = API_BASE_URL + "users";
     const headers = jwt.getAuthHeader();
     this.props.user &&
       axios
@@ -29,6 +32,23 @@ class Welcome extends Component {
           this.setState({ friends: resp.data.data, isLoading: false })
         )
         .catch((err) => console.log(err));
+    api = api + `/${jwt.getId()}/posts/getRecommendPost`;
+    this.props.user &&
+      axios
+        .get(api, { headers })
+        .then((resp) => {
+          console.log("called");
+          console.log(resp);
+        })
+        .catch((err) => console.log(err));
+    api = API_BASE_URL + "users/posts";
+    axios
+      .get(api)
+      .then((resp) => {
+        console.log(resp);
+        this.setState({ posts: resp.data.data.posts });
+      })
+      .catch((err) => console.log(err));
     this.setState({ isLoading: false });
   }
 
@@ -92,52 +112,113 @@ class Welcome extends Component {
       ))
     );
   };
+  showPostTextFull = (e) => {
+    e.stopPropagation();
+    this.setState({ showMore: true });
+  };
+  closePost = (e) => {
+    e.stopPropagation();
+    this.setState({ showMore: false });
+  };
+  createPost = () => {
+    const { postContent, postTitle, category } = this.state;
+    const username = this.props.user && this.props.user.username;
+    if (postContent && postTitle && category) {
+      this.setState({ isLoading: true });
+      const userId = jwt.getId();
+      const api = API_BASE_URL + `users/${userId}/posts`;
+      const headers = jwt.getAuthHeader();
+      axios
+        .post(api, { username, postContent, postTitle, category }, { headers })
+        .then((resp) => {
+          this.setState({ isLoading: false });
+          console.log(resp);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
   renderCreatePost = () => {
     return this.props.user ? (
-      <div className="create-post">
-        <textarea
-          className="post-content-container"
-          name="postContent"
-          placeholder="The post content goes over here"
-          value={this.state.postContent}
-          onChange={(e) => this.handleChange(e)}
-        ></textarea>
-        <div className="post-body">
-          <input
-            type="text"
-            name="postTitle"
-            value={this.state.postTitle}
-            onChange={(e) => this.handleChange(e)}
-            placeholder="The post title"
-          />
-          <select
-            value={this.state.category}
-            name="category"
-            onChange={(e) => this.handleChange(e)}
-          >
-            {interests.map((interest) => (
-              <option
-                key={interest}
-                className="option-category"
-                value={interest}
-              >
-                {interest}
-              </option>
-            ))}
-          </select>
+      <div className="create-post" onClick={(e) => this.showPostTextFull(e)}>
+        <div
+          className={`create-post-label ${
+            this.state.showMore ? "create-post-active" : ""
+          }`}
+        >
+          Create Post
         </div>
+        <div className="text-area-container">
+          <textarea
+            className="post-content-container"
+            name="postContent"
+            placeholder="The post content goes over here"
+            value={this.state.postContent}
+            onChange={(e) => this.handleChange(e)}
+          ></textarea>
+        </div>
+        {this.state.showMore && (
+          <div className="post-body">
+            <input
+              className="post-title"
+              type="text"
+              name="postTitle"
+              value={this.state.postTitle}
+              onChange={(e) => this.handleChange(e)}
+              placeholder="The post title"
+            />
+            <select
+              value={this.state.category}
+              name="category"
+              className="post-category"
+              onChange={(e) => this.handleChange(e)}
+            >
+              {interests.map((interest) => (
+                <option
+                  key={interest}
+                  className="option-category"
+                  value={interest}
+                >
+                  {interest}
+                </option>
+              ))}
+            </select>
+            <button className="post-create" onClick={this.createPost}>
+              Create Post
+            </button>
+          </div>
+        )}
       </div>
     ) : (
       ""
     );
   };
+
+  setPost = (post) => {
+    this.setState({
+      posts: this.state.posts.map((pt) => (pt._id === post._id ? post : pt)),
+    });
+  };
+
+  renderPost = () => {
+    return this.state.posts.map((post) => (
+      <Post
+        isLiked={this.props.user && this.props.user.liked.includes(post._id)}
+        key={post._id}
+        setUser={this.props.setUser}
+        user={this.props.user}
+        post={post}
+        setPost={this.setPost}
+      />
+    ));
+  };
   render() {
     return (
       <>
         {this.state.isLoading ? <Loader /> : ""}
-        <div className="Home-container page">
+        <div className="Home-container page" onClick={(e) => this.closePost(e)}>
           <div className="friend-container">{this.renderAddFriendList()}</div>
           {this.renderCreatePost()}
+          <div className="Posts-container">{this.renderPost()}</div>
         </div>
       </>
     );

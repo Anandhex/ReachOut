@@ -8,8 +8,9 @@ class JWT {
     localStorage.clear();
   }
   getId() {
-    const data = jwtDecode(localStorage.getItem("jwt"));
-    return data.id;
+    const data =
+      localStorage.getItem("jwt") && jwtDecode(localStorage.getItem("jwt"));
+    return data && data.id;
   }
   getAuthHeader() {
     return { Authorization: "Bearer " + localStorage.getItem("jwt") };

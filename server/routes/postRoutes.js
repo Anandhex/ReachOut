@@ -4,14 +4,17 @@ const {
   getPosts,
   addPost,
   updatePost,
+  getRecommendPosts,
   deletePost,
   getPost
 } = require('../controllers/postController');
 
-const commentRoutes = require('../routes/commentRoutes')
+const commentRoutes = require('../routes/commentRoutes');
 const router = express.Router({ mergeParams: true });
 
-router.use('/:postId/:comments', commentRoutes)
+router.get('/getRecommendPost', protect, getRecommendPosts);
+
+router.use('/:postId/:comments', commentRoutes);
 
 router
   .route('/')
