@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema(
   {
     //array of objects
     userId: {
-      type: mongoose.Schema.ObjectId,
+      type: String,
       ref: 'User',
       required: [true, 'Post should belong the user']
     },
@@ -27,6 +27,10 @@ const postSchema = new mongoose.Schema(
     dislikes: {
       type: Number,
       default: 0
+    },
+    username: {
+      type: String,
+      required: true
     },
     comments: [
       {

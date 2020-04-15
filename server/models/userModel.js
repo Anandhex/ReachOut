@@ -25,6 +25,9 @@ const UserSchema = new mongoose.Schema(
       minlength: 8,
       select: false
     },
+    liked: {
+      type: Array
+    },
     passwordConfirm: {
       type: String,
       required: [true, 'Please confirm your password'],

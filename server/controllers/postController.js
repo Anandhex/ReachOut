@@ -1,19 +1,24 @@
 const Post = require('../models/postModel');
+const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const APIfeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getPosts = catchAsync(async (req, res, next) => {
-  const features = new APIfeatures(
-    Post.find({ userId: req.params.userId }),
-    req.query
-  )
+  const features = new APIfeatures(Post.find(), req.query)
     .filter()
     .sort()
     .limitFields()
     .paginate();
+
   const posts = await features.query.populate('comments');
   res.status(200).json({ status: 'success', data: { posts } });
+});
+
+exports.getRecommendPosts = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+  const posts = await Post.find({ userId: { $nin: userId } });
+  res.status(200).json({ status: 'success', data: { data: posts } });
 });
 
 exports.getPost = catchAsync(async (req, res, next) => {
@@ -39,11 +44,28 @@ exports.addPost = catchAsync(async (req, res, next) => {
 exports.updatePost = catchAsync(async (req, res, next) => {
   let post = await Post.findOne({ _id: req.params.postId });
   if (post) {
-    if (req.user._id.equals(post.userId)) {
-      post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
-        new: true
-      });
-      res.status(200).json({ status: 'success', data: { data: post } });
+    if (req.user._id) {
+      if (post.likes != req.body.likes) {
+        let user = req.user;
+        user.liked.push(post._id);
+        user = await User.findByIdAndUpdate(user._id, user, { new: true });
+
+        post.likes += 1;
+        post = await Post.findByIdAndUpdate(post._id, post, { new: true });
+        res.status(200).json({
+          status: 'success',
+          data: { post, user }
+        });
+      } else if (req.user._id.equals(post.userId)) {
+        post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
+          new: true
+        });
+        res.status(200).json({ status: 'success', data: { data: post } });
+      } else {
+        next(
+          new AppError('Unauthorized. Please login to update the post', 403)
+        );
+      }
     } else {
       next(new AppError('Unauthorized. Please login to update the post', 403));
     }
