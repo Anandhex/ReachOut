@@ -49,6 +49,7 @@
   position: absolute;
   width: 40px;
   top: -0.3rem;
+  z-index: 4;
 }
 
 .post-stat-image:hover {

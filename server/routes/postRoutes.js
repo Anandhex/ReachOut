@@ -4,6 +4,7 @@ const {
   getPosts,
   addPost,
   updatePost,
+  getUserPosts,
   getRecommendPosts,
   deletePost,
   getPost
@@ -18,7 +19,7 @@ router.use('/:postId/:comments', commentRoutes);
 
 router
   .route('/')
-  .get(getPosts)
+  .get(getUserPosts)
   .post(protect, addPost);
 router
   .route('/:postId')
