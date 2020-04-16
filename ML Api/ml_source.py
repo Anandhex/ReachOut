@@ -7,11 +7,56 @@ import json,re
 
 app = Flask(__name__)
 
+
+@app.route('/',methods = ["GET","POST"])
+def home():
+    return "Api is working"
+
+
+
+"""
+    For Sentimental Analysis
+                            """
+
 PS = pickle.load(open('portStem.pkl', 'rb'))
 CV = pickle.load(open('Countvec.pkl','rb'))
 model = pickle.load(open('Gaussclass.pkl','rb'))
 with open("stopwords.json","r") as file:
     stop_words = json.load(file)["words"]
+
+def nlp_preprocessing(comment):
+
+    senti = {0:"Negative",1:"Positive"}
+
+    review = re.sub('[^a-zA-Z]', ' ' ,comment)
+    review = review.lower()
+    review = review.split()
+    review = [PS.stem(word) for word in review if not word in set(stop_words)]
+    review = " ".join(review)
+
+    corpus = [review]
+    x=CV.fit_transform(corpus).toarray()
+    pred = model.predict(x)
+
+    output = senti[pred[0]]
+    return output
+
+@app.route('/predict-sentiment',methods=['GET','POST'])
+def predict_sentiment():
+    '''
+    For rendering results on HTML GUI
+    '''
+    comment = request.args.get('comment')
+
+    sentiment = nlp_preprocessing(comment)
+
+    return jsonify({"Sentiment":sentiment})
+
+
+
+"""
+    For Clustering Model
+                        """
 
 cluster_model = None
 with open("clustering_with_age.pkl","rb") as file:
@@ -55,27 +100,6 @@ def get_interests(age,gender):
     output["Interests-Id"] = interest_id_dict
     return jsonify(output)
 
-def nlp_preprocessing(comment):
-
-    senti = {0:"Negative",1:"Positive"}
-
-    review = re.sub('[^a-zA-Z]', ' ' ,comment)
-    review = review.lower()
-    review = review.split()
-    review = [PS.stem(word) for word in review if not word in set(stop_words)]
-    review = " ".join(review)
-
-    corpus = [review]
-    x=CV.fit_transform(corpus).toarray()
-    pred = model.predict(x)
-
-    output = senti[pred[0]]
-    return output
-
-
-@app.route('/',methods = ["GET","POST"])
-def home():
-    return "Api is working"
 
 @app.route('/suggest-category',methods = ["GET","POST"])
 def predict_category():
@@ -83,20 +107,23 @@ def predict_category():
     gender = request.args.get("gender")
     return get_interests(age,gender)
 
-@app.route('/predict-sentiment',methods=['GET','POST'])
-def predict_sentiment():
-    '''
-    For rendering results on HTML GUI
-    '''
-    comment = request.args.get('comment')
 
-    sentiment = nlp_preprocessing(comment)
 
-    return jsonify({"Sentiment":sentiment})
+"""
+    For Recommendation Model
+                                """
+
+association_rules = None
+with open("Asociation_rules.pkl","rb") as file:
+    association_rules = pickle.load(file)
 
 @app.route('/recommend-interest',methods = ["GET","POST"])
 def predict_interest():
-    return "api interests working"
+    #return "api interests working"
+
+    interests = request.args.get("interests").split(";")
+
+    return jsonify(association_rules)
 
 if __name__ == "__main__":
     app.run(debug=True)
