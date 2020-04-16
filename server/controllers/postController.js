@@ -15,6 +15,20 @@ exports.getPosts = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { posts } });
 });
 
+exports.getUserPosts = catchAsync(async (req, res, next) => {
+  const features = new APIfeatures(
+    Post.find({ userId: req.params.userId }),
+    req.query
+  )
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const posts = await features.query.populate('comments');
+  res.status(200).json({ status: 'success', data: { posts } });
+});
+
 exports.getRecommendPosts = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
   const posts = await Post.find({ userId: { $nin: userId } });
@@ -26,7 +40,7 @@ exports.getPost = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
-      data: post
+      post
     }
   });
 });

@@ -27,19 +27,37 @@ export class Post extends Component {
     }
   };
 
+  handleCategory = (e) => {
+    e.stopPropagation();
+    this.props.history.push(`/specficPostCategory/${this.props.post.category}`);
+  };
+
+  handleUserClicked = (e) => {
+    e.stopPropagation();
+    if (this.props.user && this.props.user._id === this.props.post.userId) {
+      this.props.history.push("/me");
+    } else {
+      this.props.history.push(`/user/${this.props.post.userId}`);
+    }
+  };
+  handleComment = (e) => {
+    e.stopPropagation();
+    this.props.history.push(`/posts/${this.props.post._id}`);
+  };
+
   render() {
     return (
       <div className="Post-container">
         <div className="Post-title">{this.props.post.postTitle}</div>
         <div className="Post-label">
-          <div className="Post-cat">
+          <div className="Post-cat" onClick={(e) => this.handleCategory(e)}>
             <span className="hash-tag">#</span>
             {this.props.post.category}
           </div>
-          <div className="Post-user">
-            {this.props.post.username}{" "}
+          <div className="Post-user" onClick={(e) => this.handleUserClicked(e)}>
+            {this.props.post.username}
             <span style={{ display: "block" }}>
-              {moment(this.props.post.createdAt).format("Do MMM")}
+              {moment(this.props.post.createDate).format("Do MMM")}
             </span>
           </div>
         </div>
@@ -50,7 +68,7 @@ export class Post extends Component {
         <div className="Post-footer">
           <div className="Post-stats">
             <img
-              onClick={(e) => this.handleLike(e)}
+              onClick={(e) => !this.props.isOwner && this.handleLike(e)}
               className="post-stat-image"
               src={
                 this.props.isLiked
@@ -59,13 +77,15 @@ export class Post extends Component {
               }
               alt="like"
             />
+            {this.props.isOwner && this.props.post.likes}
           </div>
-          <div className="Post-stats">
+          <div className="Post-stats" onClick={(e) => this.handleComment(e)}>
             <img
               className="post-stat-image"
               src="/images/icons/comment.svg"
               alt="comment"
             />
+            {this.props.isOwner && this.props.post.comments.length}
           </div>
         </div>
       </div>

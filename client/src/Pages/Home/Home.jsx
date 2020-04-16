@@ -208,6 +208,7 @@ class Welcome extends Component {
         user={this.props.user}
         post={post}
         setPost={this.setPost}
+        {...this.props}
       />
     ));
   };

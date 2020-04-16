@@ -22,13 +22,14 @@ const {
   protect
 } = require('../controllers/authController');
 
-const { getPosts } = require('../controllers/postController');
+const { getPosts, getPost } = require('../controllers/postController');
 
 const router = express.Router();
 
 router.use('/:userId/posts', postRoutes);
 
 router.get('/posts', getPosts);
+router.get('/posts/:postId', getPost);
 router.post('/signup', signup);
 router.post('/login', login);
 

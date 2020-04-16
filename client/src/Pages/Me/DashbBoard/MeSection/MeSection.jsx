@@ -5,6 +5,7 @@ import $ from "jquery";
 import { API_BASE_URL } from "../../../../util/apiUtil";
 import axios from "axios";
 import Loader from "../../../../Components/Loader/Loader";
+import Post from "../../../../Components/Post/Post";
 
 export class MeSection extends Component {
   constructor(props) {
@@ -35,48 +36,70 @@ export class MeSection extends Component {
       userId = this.props.match && this.props.match.params.id;
     }
     if (userId) {
-      const api = API_BASE_URL + `users/${userId}`;
+      let api = API_BASE_URL + `users/${userId}`;
       axios
         .get(api)
         .then((resp) =>
           this.setState({ user: resp.data.data.user, isLoading: false })
         )
         .catch((err) => console.log(err));
+      api += "/posts?sort=-likes";
+      axios
+        .get(api)
+        .then((resp) => this.setState({ posts: resp.data.data.posts }))
+        .catch((err) => console.log(err));
     }
   }
+  renderPost = () => {
+    return this.state.posts
+      .slice(3)
+      .map((post) => (
+        <Post
+          isLiked={this.props.user && this.props.user.liked.includes(post._id)}
+          key={post._id}
+          setUser={this.props.setUser}
+          user={this.props.user}
+          post={post}
+          setPost={this.setPost}
+          {...this.props}
+          isOwner={post.userId === (this.props.user && this.props.user.userId)}
+        />
+      ));
+  };
 
   renderTopPosts = () => {
     return (
-      <div className="dashboard-post-container">
-        {this.state.posts.map((post, idx) => (
-          <div key={idx} id={idx} className="dashboard-post">
-            <div className="dashboard-post-title">{post.postTitle}</div>
-            <div className="dashboard-post-body">
-              {post.postContent.slice(0, 180) + "..."}
-            </div>
-            <div className="dashboard-post-stats-container">
-              <div className="dashboard-post-stats">
-                <div className="dashboard-stats-title">
-                  <img src="/images/icons/like.svg" alt="like" />
-                </div>
-                <div className="dashboard-stats-content">{post.likes}</div>
+      <>
+        <div className="dashboard-post-container">
+          {this.state.posts.slice(0, 3).map((post, idx) => (
+            <div key={idx} id={idx} className="dashboard-post">
+              <div className="dashboard-post-title">{post.postTitle}</div>
+              <div className="dashboard-post-body">
+                {post.postContent.slice(0, 180) + "..."}
               </div>
-              <div className="dashboard-post-stats">
-                <div className="dashboard-stats-title">
-                  <img src="/images/icons/comment.svg" alt="like" />
+              <div className="dashboard-post-stats-container">
+                <div className="dashboard-post-stats">
+                  <div className="dashboard-stats-title">
+                    <img src="/images/icons/like.svg" alt="like" />
+                  </div>
+                  <div className="dashboard-stats-content">{post.likes}</div>
                 </div>
-                <div className="dashboard-stats-content">
-                  {post.comments.length}
+                <div className="dashboard-post-stats">
+                  <div className="dashboard-stats-title">
+                    <img src="/images/icons/comment.svg" alt="like" />
+                  </div>
+                  <div className="dashboard-stats-content">
+                    {post.comments.length}
+                  </div>
                 </div>
-              </div>
-              {/* <div className="dashboard-post-stats">
+                {/* <div className="dashboard-post-stats">
                 <div className="dashboard-stats-title">
                   <img src="/images/icons/unlike.svg" alt="like" />
                 </div>
                 <div className="dashboard-stats-content">{post.dislikes}</div>
               </div> */}
-            </div>
-            {/* <div className="dashboard-post-comment-container">
+              </div>
+              {/* <div className="dashboard-post-comment-container">
                     {post.comments.slice(0, 3).map((comment) => (
                       <div className="dashboard-post-comment">
                         <div className="dashboard-post-commentText">
@@ -88,9 +111,11 @@ export class MeSection extends Component {
                       </div>
                     ))}
                   </div> */}
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+        <div className="Posts-container">{this.renderPost()}</div>
+      </>
     );
   };
   render() {
