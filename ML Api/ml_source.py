@@ -31,13 +31,14 @@ def nlp_preprocessing(comment):
     review = re.sub('[^a-zA-Z]', ' ' ,comment)
     review = review.lower()
     review = review.split()
+
     review = [PS.stem(word) for word in review if not word in set(stop_words)]
     review = " ".join(review)
 
     corpus = [review]
-    x=CV.fit_transform(corpus).toarray()
+    #return corpus
+    x=CV.transform(corpus).toarray()
     pred = model.predict(x)
-
     output = senti[pred[0]]
     return output
 
@@ -114,7 +115,7 @@ def predict_category():
                                 """
 
 association_rules = None
-with open("Asociation_rules.pkl","rb") as file:
+with open("Association_rules.pkl","rb") as file:
     association_rules = pickle.load(file)
 
 @app.route('/recommend-interest',methods = ["GET","POST"])
@@ -126,4 +127,4 @@ def predict_interest():
     return jsonify(association_rules)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,port="5001")
