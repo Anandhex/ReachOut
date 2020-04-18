@@ -50,9 +50,9 @@ export class Me extends Component {
           />
         );
       case "Posts":
-        return <Posts user={this.props.user} />;
+        return <Posts user={this.props.user} {...this.props} />;
       case "Saved":
-        return <Saved user={this.props.user} />;
+        return <Saved user={this.props.user} {...this.props} />;
       default:
         return <Error />;
     }
@@ -87,7 +87,7 @@ export class Me extends Component {
                   Posts
                 </div>
                 <div id="Saved" onClick={(e) => this.setSelectedSection(e)}>
-                  Saved
+                  Liked
                 </div>
               </div>
             </div>

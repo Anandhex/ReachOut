@@ -15,7 +15,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/getRecommendPost', protect, getRecommendPosts);
 
-router.use('/:postId/:comments', commentRoutes);
+router.use('/:postId/comments', commentRoutes);
 
 router
   .route('/')

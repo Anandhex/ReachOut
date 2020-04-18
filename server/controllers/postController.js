@@ -32,11 +32,21 @@ exports.getUserPosts = catchAsync(async (req, res, next) => {
 exports.getRecommendPosts = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
   const posts = await Post.find({ userId: { $nin: userId } });
-  res.status(200).json({ status: 'success', data: { data: posts } });
+  res.status(200).json({ status: 'success', data: { posts } });
 });
 
 exports.getPost = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.postId).populate('comments');
+  res.status(200).json({
+    status: 'success',
+    data: {
+      post
+    }
+  });
+});
+
+exports.getLikedPost = catchAsync(async (req, res, next) => {
+  const post = await Post.find({ _id: { $in: [...req.user.liked] } });
   res.status(200).json({
     status: 'success',
     data: {

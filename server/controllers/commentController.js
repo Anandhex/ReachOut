@@ -19,7 +19,6 @@ exports.getComments = catchAsync(async (req, res, next) => {
 
 exports.addComment = catchAsync(async (req, res, next) => {
   req.body.userId = req.user._id;
-  req.body.username = req.user.email;
   req.body.postId = req.params.postId;
   const comment = await Comment.create(req.body);
   let post = await Post.findById(req.body.postId);

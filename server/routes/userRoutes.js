@@ -22,12 +22,17 @@ const {
   protect
 } = require('../controllers/authController');
 
-const { getPosts, getPost } = require('../controllers/postController');
+const {
+  getPosts,
+  getPost,
+  getLikedPost
+} = require('../controllers/postController');
 
 const router = express.Router();
 
 router.use('/:userId/posts', postRoutes);
 
+router.get('/getLikedPost', protect, getLikedPost);
 router.get('/posts', getPosts);
 router.get('/posts/:postId', getPost);
 router.post('/signup', signup);

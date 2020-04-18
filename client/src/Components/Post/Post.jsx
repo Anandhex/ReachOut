@@ -62,8 +62,17 @@ export class Post extends Component {
           </div>
         </div>
         <div className="Post-body">
-          {`${this.props.post.postContent.slice(0, 150)} .... `}
-          <span className="read-more-tag"> Read more</span>
+          {`${
+            this.props.post.postContent &&
+            this.props.post.postContent.slice(0, 150)
+          } .... `}
+          <br />
+          <span
+            className="read-more-tag"
+            onClick={(e) => this.handleComment(e)}
+          >
+            Read more
+          </span>
         </div>
         <div className="Post-footer">
           <div className="Post-stats">

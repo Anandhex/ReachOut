@@ -69,9 +69,11 @@ class Welcome extends Component {
       })
       .catch((err) => console.log(err));
   };
-  removeFromList = (e) => {
+  removeFromList = (e, id) => {
     e.stopPropagation();
-    console.log("Remove Clicked");
+    this.setState({
+      friends: this.state.friends.filter((frined) => frined._id !== id),
+    });
   };
 
   showUserProfile = (id) => {
@@ -103,7 +105,7 @@ class Welcome extends Component {
             </button>
             <button
               className="btn-cancel"
-              onClick={(e) => this.removeFromList(e)}
+              onClick={(e) => this.removeFromList(e, friend._id)}
             >
               Cancel
             </button>

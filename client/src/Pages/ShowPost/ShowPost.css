@@ -18,6 +18,10 @@
   margin-bottom: 2.5rem;
 }
 
+.Add-comment-container {
+  margin-bottom: 1.2rem;
+}
+
 .ShowPost-add-comment {
   width: 100%;
   border: none;
@@ -27,8 +31,76 @@
   transition: all 0.4s ease-in;
 }
 .ShowPost-add-comment:hover,
-.ShowPost-add-commentfocus {
+.ShowPost-add-comment:focus {
   outline: none !important;
   border: none !important;
   border-bottom: 1px solid var(--primary-color) !important;
+}
+
+.create-post-btn {
+  padding: 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
+
+.create-post-btn:hover,
+.create-post-btn:focus {
+  background-color: var(--primary-color);
+  color: white;
+  outline: none;
+  letter-spacing: 0.3rem;
+}
+
+.Add-comment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-comment {
+  float: right;
+  cursor: pointer;
+}
+.edit-comment img,
+.comment-stat img {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.comment-footer {
+  display: flex;
+  margin-top: 0.5rem;
+  color: var(--primary-color);
+  font-variant: small-caps;
+  justify-content: flex-end;
+  font-size: 0.6rem;
+}
+
+.commet {
+  margin-bottom: 0.8rem;
+  position: relative;
+}
+.comment-stat {
+  color: var(--primary-color);
+  font-size: 0.8rem;
+  font-variant: small-caps;
+  margin-right: 1.2rem;
+  cursor: pointer;
+}
+
+.commet-date {
+  font-size: 0.3rem;
+}
+
+.edit-option-available {
+  float: right;
+}
+
+.edit-option-available img {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.Post-container textarea {
+  width: 100% !important;
 }
