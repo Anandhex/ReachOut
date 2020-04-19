@@ -32,23 +32,27 @@ class Welcome extends Component {
           this.setState({ friends: resp.data.data, isLoading: false })
         )
         .catch((err) => console.log(err));
-    api = api + `/${jwt.getId()}/posts/getRecommendPost`;
+    api =
+      api +
+      `/${jwt.getId()}/posts/getRecommendPost${
+        this.props.isRecommended ? "?recommend=true" : ""
+      }`;
     this.props.user &&
       axios
         .get(api, { headers })
         .then((resp) => {
-          console.log("called");
-          console.log(resp);
+          this.setState({ posts: resp.data.data.posts });
         })
         .catch((err) => console.log(err));
     api = API_BASE_URL + "users/posts";
-    axios
-      .get(api)
-      .then((resp) => {
-        console.log(resp);
-        this.setState({ posts: resp.data.data.posts });
-      })
-      .catch((err) => console.log(err));
+    !this.props.user &&
+      axios
+        .get(api)
+        .then((resp) => {
+          console.log(resp);
+          this.setState({ posts: resp.data.data.posts });
+        })
+        .catch((err) => console.log(err));
     this.setState({ isLoading: false });
   }
 

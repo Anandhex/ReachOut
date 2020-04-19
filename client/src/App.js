@@ -23,6 +23,7 @@ class App extends Component {
     this.state = {
       user: null,
       jwt: null,
+      recommender: false,
     };
   }
   componentDidMount() {
@@ -48,16 +49,25 @@ class App extends Component {
   logout = () => {
     this.setState({ user: null });
   };
+  enableRecommender = (enable) => {
+    this.setState({ recommender: enable });
+  };
   render() {
     return (
       <>
-        <NavBar user={this.state.user} logout={this.handleLogout} />
+        <NavBar
+          user={this.state.user}
+          logout={this.handleLogout}
+          recommender={this.state.recommender}
+          enableRecommender={this.enableRecommender}
+        />
         <Switch>
           <Route
             exact
             path="/"
             render={(routeParams) => (
               <Home
+                isRecommended={this.state.recommender}
                 user={this.state.user}
                 setUser={this.setUser}
                 {...routeParams}

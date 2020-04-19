@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const APIfeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-
+const axios = require('axios');
 exports.getPosts = catchAsync(async (req, res, next) => {
   const features = new APIfeatures(Post.find(), req.query)
     .filter()
@@ -31,6 +31,12 @@ exports.getUserPosts = catchAsync(async (req, res, next) => {
 
 exports.getRecommendPosts = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
+  const intererts = await axios.get(
+    `http://127.0.0.1:5001/recommend-interest?name=${req.user.areaOfInterest
+      .filter(interest => interest)
+      .join(';')}}`
+  );
+  console.log(intererts);
   const posts = await Post.find({ userId: { $nin: userId } });
   res.status(200).json({ status: 'success', data: { posts } });
 });
@@ -57,9 +63,18 @@ exports.getLikedPost = catchAsync(async (req, res, next) => {
 
 exports.addPost = catchAsync(async (req, res, next) => {
   req.body.userId = req.params.userId ? req.params.userId : req.user._id;
+  const resp = await axios.get(
+    `http://127.0.0.1:5001/predict-sentiment?comment=${req.body.postContent}`
+  );
   if (req.user._id.equals(req.body.userId)) {
-    const post = await Post.create(req.body);
-    res.status(201).json({ status: 'success', data: { data: post } });
+    if (resp.data.Sentiment === 'Positive') {
+      const post = await Post.create(req.body);
+      res.status(201).json({ status: 'success', data: { data: post } });
+    } else {
+      return next(
+        new AppError('The post is not appropriate to be posted', 403)
+      );
+    }
   } else {
     next(new AppError('Unauthorized access', 403));
   }
@@ -81,9 +96,18 @@ exports.updatePost = catchAsync(async (req, res, next) => {
           data: { post, user }
         });
       } else if (req.user._id.equals(post.userId)) {
-        post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
-          new: true
-        });
+        const resp = await axios.get(
+          `http://127.0.0.1:5001/predict-sentiment?comment=${req.body.postContent}`
+        );
+        if (resp.data.Sentiment === 'Positive') {
+          post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
+            new: true
+          });
+        } else {
+          return next(
+            new AppError('The post is not appropriate to be updated', 403)
+          );
+        }
         res.status(200).json({ status: 'success', data: { data: post } });
       } else {
         next(

@@ -35,6 +35,16 @@ class NavBar extends Component {
             </>
           ) : (
             <div className="NavBar-nav-right-user-signed">
+              <div
+                onClick={() =>
+                  this.props.enableRecommender(!this.props.recommender)
+                }
+                className={`recommender-btn ${
+                  this.props.recommender ? "recommender-btn-enable" : ""
+                }`}
+              >
+                {this.props.recommender ? "Enabled" : "Recommend"}
+              </div>
               <NavLink
                 to="/me"
                 exact
