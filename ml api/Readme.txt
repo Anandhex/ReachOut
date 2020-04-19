@@ -3,6 +3,8 @@ For Sentimental Model
     Query parameters
         name - comment ; type - String
 
+    description
+
 For Cluster Model
     Api Endpoint - /suggest-category
     Query parameters

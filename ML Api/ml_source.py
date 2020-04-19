@@ -4,6 +4,7 @@ import numpy as np
 import pickle
 from sklearn.cluster import KMeans
 import json,re
+import random
 
 app = Flask(__name__)
 
@@ -122,9 +123,24 @@ with open("Association_rules.pkl","rb") as file:
 def predict_interest():
     #return "api interests working"
 
-    interests = request.args.get("interests").split(";")
+    inter_interests = request.args.get("interests").split(":")
+    interests = list(map(lambda x:x.lower(),inter_interests))
+    interests.sort()
+    """
+    ind = None
+    try:
+        ind = association_rules["Antecedent"].index(interests)
+    except:
+        return jsonify({"interests":"nothing"})
 
-    return jsonify(association_rules)
+    return jsonify({"interests":ind})"""
+
+    random.shuffle(association_rules)
+    for rule in association_rules:
+        if rule["Antecedent"] == interests:
+            return jsonify({"interests":rule["Consequent"]})
+    return jsonify({"interests":"Found Nothing"})
+
 
 if __name__ == "__main__":
     app.run(debug=True,port="5001")
