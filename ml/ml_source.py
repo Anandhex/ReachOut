@@ -5,6 +5,7 @@ import pickle
 from sklearn.cluster import KMeans
 import json,re
 import random
+import copy
 
 app = Flask(__name__)
 
@@ -139,7 +140,11 @@ def predict_interest():
     for rule in association_rules:
         if rule["Antecedent"] == interests:
             return jsonify({"interests":rule["Consequent"]})
-    return jsonify({"interests":"Found Nothing"})
+
+    inte = copy.deepcopy(list(interest_id_dict.keys()))
+    random.shuffle(inte)
+
+    return jsonify({"interests":inte[:3]})
 
 
 if __name__ == "__main__":
