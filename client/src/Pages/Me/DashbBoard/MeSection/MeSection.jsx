@@ -35,6 +35,7 @@ export class MeSection extends Component {
     if (!userId) {
       userId = this.props.match && this.props.match.params.id;
     }
+    console.log(userId);
     if (userId) {
       let api = API_BASE_URL + `users/${userId}`;
       axios
@@ -51,11 +52,16 @@ export class MeSection extends Component {
     }
   }
   renderPost = () => {
+    console.log(this.props.user);
     return this.state.posts
       .slice(3)
       .map((post) => (
         <Post
-          isLiked={this.props.user && this.props.user.liked.includes(post._id)}
+          isLiked={
+            this.props.user &&
+            this.props.user.liked &&
+            this.props.user.liked.includes(post._id)
+          }
           key={post._id}
           setUser={this.props.setUser}
           user={this.props.user}

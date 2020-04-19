@@ -63,7 +63,7 @@
 }
 
 .read-more-tag {
-  display: block;
+  white-space: pre-line;
   font-variant: small-caps;
   font-size: 0.7rem;
   cursor: pointer;
