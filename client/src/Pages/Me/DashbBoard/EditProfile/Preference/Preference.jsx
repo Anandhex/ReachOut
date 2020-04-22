@@ -32,7 +32,7 @@ export class Preference extends Component {
       this.setState({ selected });
     }
   };
-  handleClick = () => {
+  handleClick = async () => {
     const { selected } = this.state;
     if (
       this.state.selected &&
@@ -44,24 +44,14 @@ export class Preference extends Component {
         areaOfInterest: selected,
       };
       const headers = jwt.getAuthHeader();
-      axios
-        .patch(api, body, { headers })
-        .then((resp) => {
-          this.props.setUser(resp.data.data.user);
-          this.setState({ isLoading: false });
-        })
-        .catch((error) => {
-          this.setState(
-            {
-              error: { message: error.response.message, messageType: "error" },
-              isLoading: false,
-            },
-            () => {
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
-          console.log(error);
-        });
+      try {
+        const resp = await axios.patch(api, body, { headers });
+        this.props.setUser(resp.data.data.user);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.setState({ isLoading: false });
+      }
     } else {
       this.setState(
         {

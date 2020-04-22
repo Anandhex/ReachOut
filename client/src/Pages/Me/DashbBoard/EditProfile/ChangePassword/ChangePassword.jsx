@@ -23,30 +23,19 @@ export class ChangePassword extends Component {
         return "Please wait";
     }
   };
-  handleClick = () => {
+  handleClick = async () => {
     this.setState({ count: this.state.count + 1, isLoading: true });
     const api = API_BASE_URL + `users/forgotPassword`;
     let body = {
       email: this.props.user && this.props.user.email,
     };
-    axios
-      .post(api, body)
-      .then((resp) => {
-        console.log(resp);
-        this.setState({ isLoading: false });
-      })
-      .catch((error) => {
-        this.setState(
-          {
-            error: { message: error.response.message, messageType: "error" },
-            isLoading: false,
-          },
-          () => {
-            setTimeout(() => this.setState({ error: null }), 3000);
-          }
-        );
-        console.log(error);
-      });
+    try {
+      const resp = await axios.post(api, body);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   render() {

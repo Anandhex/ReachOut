@@ -10,16 +10,15 @@ export class Saved extends Component {
     this.state = { posts: [] };
   }
 
-  componentDidMount() {
-    const category = this.props.match && this.props.match.params.category;
+  async componentDidMount() {
     const api = API_BASE_URL + `users/getLikedPost`;
     const headers = jwt.getAuthHeader();
-    axios
-      .get(api, { headers })
-      .then((resp) => {
-        this.setState({ posts: resp.data.data.post });
-      })
-      .catch((err) => console.log(err));
+    try {
+      const resp = await axios.get(api, { headers });
+      this.setState({ posts: resp.data.data.post });
+    } catch (err) {
+      console.log(err);
+    }
   }
   setPost = (post) => {
     this.setState({

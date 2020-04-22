@@ -11,6 +11,7 @@ const {
   addFriend,
   getFriends,
   getFriendsRecommendationList,
+  getInterestRecommendation,
   deleteFriend,
   uploadProfileImg
 } = require('../controllers/userController');
@@ -43,6 +44,9 @@ router.get('/resetPassword/:token', resetPassword);
 
 router.route('/profileUpload').post(protect, uploadProfileImg);
 router.route('/friends').get(protect, getFriends);
+router
+  .route('/:userId/recommendedInterest')
+  .get(protect, getInterestRecommendation);
 router
   .route('/friends/:userId')
   .patch(protect, addFriend)

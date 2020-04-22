@@ -16,6 +16,8 @@ class SignUp extends Component {
       email: "",
       password: "",
       passwordConfirm: "",
+      age: "",
+      gender: "Male",
       error: null,
       isLoading: false,
       isBoarded: false,
@@ -28,8 +30,15 @@ class SignUp extends Component {
   toggleLoadingState = () => {
     this.setState({ isLoading: !this.state.isLoading });
   };
-  handleClick = () => {
-    const { username, email, password, passwordConfirm } = this.state;
+  handleClick = async () => {
+    const {
+      username,
+      email,
+      password,
+      passwordConfirm,
+      age,
+      gender,
+    } = this.state;
     let api = API_BASE_URL;
 
     if (
@@ -37,79 +46,50 @@ class SignUp extends Component {
       username &&
       email &&
       password &&
-      passwordConfirm
+      passwordConfirm &&
+      age &&
+      gender
     ) {
       api = API_BASE_URL + "users/signup";
       this.toggleLoadingState();
-      axios
-        .post(api, {
+      try {
+        let resp = await axios.post(api, {
           username,
           email,
           password,
           passwordConfirm,
-        })
-        .then((resp) => {
-          this.toggleLoadingState();
-          const data = resp.data;
-          jwt.setJWt(data.token);
-          this.props.setUser(data.data.user);
-          this.props.history.push("/selectInterst");
-        })
-        .catch((error) => {
-          let data;
-          if (error.response) data = error.response;
-          else data = { message: "Something went wrong!" };
-          this.setState(
-            {
-              error: { message: data.message, messageType: "error" },
-            },
-            () => {
-              this.toggleLoadingState();
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
+          age,
+          gender,
         });
+        this.toggleLoadingState();
+        const data = resp.data;
+        jwt.setJWt(data.token);
+        this.props.setUser(data.data.user);
+        this.props.history.push("/selectInterst");
+      } catch (err) {
+        console.log(err);
+      }
     } else if (this.props.isSignIn === false && username && email && password) {
       api = API_BASE_URL + "users/login";
-      axios
-        .post(api, {
+      try {
+        let resp = await axios.post(api, {
           username,
           email,
           password,
-        })
-        .then((resp) => {
-          this.toggleLoadingState();
-          const data = resp.data;
-          jwt.setJWt(data.token);
-          this.props.setUser(data.data.user);
-          jwt.setBoarded(data.data.user.isBoarded);
-          if (data.data.user.isBoarded) {
-            this.props.history.push("/");
-          } else {
-            this.props.history.push("/selectInterst");
-          }
-        })
-        .catch((error) => {
-          let data;
-          if (error.response) {
-            data = error.response;
-            if (/^4*/.test(data.status)) {
-              data = data.data;
-            }
-          } else {
-            data = { message: "Something went wrong!" };
-          }
-
-          this.setState(
-            {
-              error: { message: data.message, messageType: "error" },
-            },
-            () => {
-              this.toggleLoadingState();
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
         });
+        this.toggleLoadingState();
+        const data = resp.data;
+        jwt.setJWt(data.token);
+        this.props.setUser(data.data.user);
+        jwt.setBoarded(data.data.user.isBoarded);
+        if (data.data.user.isBoarded) {
+          this.props.history.push("/");
+        } else {
+          this.props.history.push("/selectInterst");
+        }
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       this.setState(
         {
@@ -182,6 +162,35 @@ class SignUp extends Component {
                   value={this.state.passwordConfirm}
                   onChange={(e) => this.handleChange(e)}
                 />
+              </div>
+              <div className="SignUp-form-input-field">
+                <label htmlFor="passwordConfirm">Age </label>
+                <input
+                  type="number"
+                  name="age"
+                  id="age"
+                  min="18"
+                  max="99"
+                  placeholder="Enter your age"
+                  value={this.state.age}
+                  onChange={(e) => this.handleChange(e)}
+                />
+              </div>
+              <div className="SignUp-form-input-field">
+                <select
+                  value={this.state.gender}
+                  name="gender"
+                  id="gender"
+                  className="post-category"
+                  onChange={(e) => this.handleChange(e)}
+                >
+                  <option className="option-category" value={"Male"}>
+                    Male
+                  </option>
+                  <option className="option-category" value={"Female"}>
+                    Female
+                  </option>
+                </select>
               </div>
               <div className="SignUp-form-button">
                 <input

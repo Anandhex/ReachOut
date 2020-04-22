@@ -31,13 +31,18 @@ exports.getUserPosts = catchAsync(async (req, res, next) => {
 
 exports.getRecommendPosts = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
-  const intererts = await axios.get(
-    `http://127.0.0.1:5001/recommend-interest?name=${req.user.areaOfInterest
+  let resp = await axios.get(
+    `http://127.0.0.1:5001/recommend-interest?interests=${req.user.areaOfInterest
       .filter(interest => interest)
-      .join(';')}}`
+      .join(':')}}`
   );
-  console.log(intererts);
-  const posts = await Post.find({ userId: { $nin: userId } });
+  let interests = resp.data.interests;
+  interests.push(...req.user.areaOfInterest);
+  interests = interests.filter(interest => interest);
+  console.log(interests);
+  const posts = await Post.find({
+    $and: [{ userId: { $nin: userId } }, { category: { $in: interests } }]
+  });
   res.status(200).json({ status: 'success', data: { posts } });
 });
 

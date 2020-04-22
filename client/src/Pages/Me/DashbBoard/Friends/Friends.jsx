@@ -13,35 +13,36 @@ export class Friends extends Component {
       isLoading: false,
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const api = API_BASE_URL + `users/friends`;
     const headers = jwt.getAuthHeader();
-    axios
-      .get(api, { headers })
-      .then(({ data }) => {
-        this.setState({ friends: data.data.data });
-      })
-      .catch((err) => console.log(err));
+    try {
+      const resp = await axios.get(api, { headers });
+      this.setState({ friends: resp.data.data.data });
+    } catch (err) {
+      console.log(err);
+    }
   }
   showUserProfile = (e, id) => {
     e.stopPropagation();
     this.props.history.push(`/user/${id}`);
   };
-  removeFriend = (e, id) => {
+  removeFriend = async (e, id) => {
     e.stopPropagation();
     this.setState({ isLoading: true });
     const headers = jwt.getAuthHeader();
     const api = API_BASE_URL + `users/friends/${id}`;
-    axios
-      .delete(api, { headers })
-      .then((resp) => {
-        this.setState({
-          friends: resp.data.data.user.friends,
-          isLoading: false,
-        });
-        this.props.setUser(resp.data.data.user);
-      })
-      .catch((err) => console.log(err));
+    try {
+      const resp = await axios.delete(api, { headers });
+      this.setState({
+        friends: resp.data.data.user.friends,
+      });
+      this.props.setUser(resp.data.data.user);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
   renderFriends = () => {
     return this.state.friends.map((friend) => (

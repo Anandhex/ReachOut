@@ -3,22 +3,26 @@ import "./ShowPostsByCategory.css";
 import axios from "axios";
 import { API_BASE_URL } from "../../util/apiUtil";
 import Post from "../../Components/Post/Post";
+import Loader from "../../Components/Loader/Loader";
 
 export class ShowPostsByCategory extends Component {
   constructor(props) {
     super(props);
-    this.state = { posts: [] };
+    this.state = { posts: [], isLoading: false };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    this.setState({ isLoading: true });
     const category = this.props.match && this.props.match.params.category;
     const api = API_BASE_URL + `users/posts?category=${category}`;
-    axios
-      .get(api)
-      .then((resp) => {
-        this.setState({ posts: resp.data.data.posts });
-      })
-      .catch((err) => console.log(err));
+    try {
+      const resp = await axios.get(api);
+      this.setState({ posts: resp.data.data.posts });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   }
   setPost = (post) => {
     this.setState({
@@ -40,12 +44,15 @@ export class ShowPostsByCategory extends Component {
   };
   render() {
     return (
-      <div className="page">
-        <div className="category-title">
-          {this.props.match && this.props.match.params.category}
+      <>
+        {this.state.isLoading ? <Loader /> : ""}
+        <div className="page">
+          <div className="category-title">
+            {this.props.match && this.props.match.params.category}
+          </div>
+          <div className="Posts-container">{this.renderPost()}</div>
         </div>
-        <div className="Posts-container">{this.renderPost()}</div>
-      </div>
+      </>
     );
   }
 }

@@ -11,7 +11,6 @@ export class ProfileUpdate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      age: "",
       profileImg: "default",
       interests: null,
       error: null,
@@ -39,34 +38,17 @@ export class ProfileUpdate extends Component {
       "Accept-Language": "en-US,en;q=0.8",
       "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
     };
-    const resp = axios.post(api, data, { headers });
-    resp
-      .then((resp) => {
-        this.props.setUser(resp.data.data.user);
-        this.setState({
-          profileImg: resp.data.data.user.profile_img,
-          isLoading: false,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState(
-          {
-            error: {
-              message: error.response
-                ? error.response.data.message
-                : "Something went wrong!",
-              messageType: "error",
-            },
-          },
-          () => {
-            setTimeout(
-              () => this.setState({ error: "", isLoading: false }),
-              3000
-            );
-          }
-        );
+    try {
+      const resp = await axios.post(api, data, { headers });
+      this.props.setUser(resp.data.data.user);
+      this.setState({
+        profileImg: resp.data.data.user.profile_img,
       });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
   handleChange = (e) => {
     if (e.target.name === "profileImg") {
@@ -78,34 +60,23 @@ export class ProfileUpdate extends Component {
     this.props.history.goBack();
   };
 
-  finishBoarding = () => {
-    if (this.state.interests.length && this.state.age) {
+  finishBoarding = async () => {
+    if (this.state.interests.length) {
       let api = API_BASE_URL + `users/${jwt.getId()}`;
       let body = {
         areaOfInterest: this.state.interests,
-        dob: this.state.age,
         profile_img: this.state.profileImg,
         isBoarded: true,
       };
       const headers = jwt.getAuthHeader();
-      axios
-        .patch(api, body, { headers })
-        .then((resp) => {
-          this.props.setUser(resp.data.data.user);
-          jwt.setBoarded(true);
-          this.props.history.push("/");
-        })
-        .catch((error) => {
-          this.setState(
-            {
-              error: { message: error.response.message, messageType: "error" },
-            },
-            () => {
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
-          console.log(error);
-        });
+      try {
+        const resp = await axios.patch(api, body, { headers });
+        this.props.setUser(resp.data.data.user);
+        jwt.setBoarded(true);
+        this.props.history.push("/");
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       this.setState(
         {
@@ -170,7 +141,7 @@ export class ProfileUpdate extends Component {
                 />
               </label>
             </div>
-            <div className="SignUp-form-input-field">
+            {/* <div className="SignUp-form-input-field">
               <label htmlFor="age">
                 Age <span style={{ color: "red", fontSize: "0.6rem" }}>*</span>
               </label>
@@ -184,7 +155,7 @@ export class ProfileUpdate extends Component {
                 value={this.state.age}
                 onChange={(e) => this.handleChange(e)}
               />
-            </div>
+            </div> */}
           </div>
         </form>
       </>

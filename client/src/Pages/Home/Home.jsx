@@ -21,57 +21,55 @@ class Welcome extends Component {
       posts: [],
     };
   }
-  componentDidMount() {
-    this.setState({ isLoading: true });
-    let api = API_BASE_URL + "users";
-    const headers = jwt.getAuthHeader();
-    this.props.user &&
-      axios
-        .get(api + "/getFriendRecommendation", { headers })
-        .then((resp) =>
-          this.setState({ friends: resp.data.data, isLoading: false })
-        )
-        .catch((err) => console.log(err));
-    api =
-      api +
-      `/${jwt.getId()}/posts/getRecommendPost${
-        this.props.isRecommended ? "?recommend=true" : ""
-      }`;
-    this.props.user &&
-      axios
-        .get(api, { headers })
-        .then((resp) => {
-          this.setState({ posts: resp.data.data.posts });
-        })
-        .catch((err) => console.log(err));
-    api = API_BASE_URL + "users/posts";
-    !this.props.user &&
-      axios
-        .get(api)
-        .then((resp) => {
-          console.log(resp);
-          this.setState({ posts: resp.data.data.posts });
-        })
-        .catch((err) => console.log(err));
-    this.setState({ isLoading: false });
+  async componentDidMount() {
+    let resp;
+    try {
+      this.setState({ isLoading: true });
+      let api = API_BASE_URL + "users";
+      const headers = jwt.getAuthHeader();
+      if (this.props.user) {
+        resp = await axios.get(api + "/getFriendRecommendation", {
+          headers,
+        });
+        this.setState({ friends: resp.data.data });
+        api =
+          api +
+          `/${jwt.getId()}/posts/getRecommendPost${
+            this.props.isRecommended ? "?recommend=true" : ""
+          }`;
+        resp = await axios.get(api, { headers });
+        this.setState({ posts: resp.data.data.posts });
+      } else {
+        api = API_BASE_URL + "users/posts";
+        resp = await axios.get(api);
+        this.setState({ posts: resp.data.data.posts });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   }
 
-  addFriend = (e, id) => {
-    e.stopPropagation();
-    const api = API_BASE_URL + `users/friends/${id}`;
-    const headers = jwt.getAuthHeader();
-    this.setState({ isLoading: true });
-    axios
-      .patch(api, { userId: id }, { headers })
-      .then((resp) => {
+  addFriend = async (e, id) => {
+    try {
+      e.stopPropagation();
+      const api = API_BASE_URL + `users/friends/${id}`;
+      const headers = jwt.getAuthHeader();
+      this.setState({ isLoading: true });
+      let resp = await axios.patch(api, { userId: id }, { headers });
+      if (resp) {
         this.props.setUser(resp.data.data.user);
-        axios
-          .get(API_BASE_URL + "users/getFriendRecommendation", { headers })
-          .then((resp) => {
-            this.setState({ friends: resp.data.data, isLoading: false });
-          });
-      })
-      .catch((err) => console.log(err));
+        resp = await axios.get(API_BASE_URL + "users/getFriendRecommendation", {
+          headers,
+        });
+        this.setState({ friends: resp.data.data });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
   removeFromList = (e, id) => {
     e.stopPropagation();
@@ -126,21 +124,26 @@ class Welcome extends Component {
     e.stopPropagation();
     this.setState({ showMore: false });
   };
-  createPost = () => {
+  createPost = async () => {
     const { postContent, postTitle, category } = this.state;
     const username = this.props.user && this.props.user.username;
     if (postContent && postTitle && category) {
-      this.setState({ isLoading: true });
-      const userId = jwt.getId();
-      const api = API_BASE_URL + `users/${userId}/posts`;
-      const headers = jwt.getAuthHeader();
-      axios
-        .post(api, { username, postContent, postTitle, category }, { headers })
-        .then((resp) => {
-          this.setState({ isLoading: false });
-          console.log(resp);
-        })
-        .catch((err) => console.log(err));
+      try {
+        this.setState({ isLoading: true });
+        const userId = jwt.getId();
+        const api = API_BASE_URL + `users/${userId}/posts`;
+        const headers = jwt.getAuthHeader();
+        const resp = await axios.post(
+          api,
+          { username, postContent, postTitle, category },
+          { headers }
+        );
+        this.setState({ postContent: "", postTitle: "" });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.setState({ isLoading: false });
+      }
     }
   };
   renderCreatePost = () => {

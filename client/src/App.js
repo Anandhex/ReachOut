@@ -105,7 +105,12 @@ class App extends Component {
               <Logout logout={this.logout} {...routeParams} />
             )}
           />
-          <Route exact path="/selectInterst" component={Interest} />
+          <Route
+            exact
+            path="/selectInterst"
+            user={this.state.user}
+            component={Interest}
+          />
           <Route
             exact
             path="/profileUpdate"

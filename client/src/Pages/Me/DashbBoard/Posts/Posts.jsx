@@ -9,15 +9,14 @@ export class Posts extends Component {
     this.state = { posts: [] };
   }
 
-  componentDidMount() {
-    const category = this.props.match && this.props.match.params.category;
-    const api = API_BASE_URL + `users/posts?userId=${this.props.user._id}`;
-    axios
-      .get(api)
-      .then((resp) => {
-        this.setState({ posts: resp.data.data.posts });
-      })
-      .catch((err) => console.log(err));
+  async componentDidMount() {
+    try {
+      const api = API_BASE_URL + `users/posts?userId=${this.props.user._id}`;
+      const resp = await axios.get(api);
+      this.setState({ posts: resp.data.data.posts });
+    } catch (err) {
+      console.log(err);
+    }
   }
   setPost = (post) => {
     this.setState({

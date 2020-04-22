@@ -6,6 +6,7 @@ const AWS = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const path = require('path');
+const axios = require('axios');
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -44,6 +45,14 @@ function checkFileType(file, cb) {
     cb('Error: Images Only!');
   }
 }
+
+exports.getInterestRecommendation = catchAsync(async (req, res, next) => {
+  console.log(req.user);
+  const user = await axios.get(
+    `http://127.0.0.1:5001/suggest-category?age=${req.user.dob}&gender=${req.user.gender}`
+  );
+  res.status(200).json({ status: 'success', data: { data: user.data } });
+});
 
 exports.getUsers = catchAsync(async (req, res, next) => {
   const features = new APIfeatures(User.find(), req.query)

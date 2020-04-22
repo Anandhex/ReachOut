@@ -16,7 +16,7 @@ export class MeSection extends Component {
       isLoading: false,
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     $(".dashboard-count").each(function () {
       var $this = $(this);
       $({ Counter: 0 }).animate(
@@ -35,24 +35,22 @@ export class MeSection extends Component {
     if (!userId) {
       userId = this.props.match && this.props.match.params.id;
     }
-    console.log(userId);
     if (userId) {
-      let api = API_BASE_URL + `users/${userId}`;
-      axios
-        .get(api)
-        .then((resp) =>
-          this.setState({ user: resp.data.data.user, isLoading: false })
-        )
-        .catch((err) => console.log(err));
-      api += "/posts?sort=-likes";
-      axios
-        .get(api)
-        .then((resp) => this.setState({ posts: resp.data.data.posts }))
-        .catch((err) => console.log(err));
+      try {
+        let api = API_BASE_URL + `users/${userId}`;
+        let resp = await axios.get(api);
+        this.setState({ user: resp.data.data.user });
+        api += "/posts?sort=-likes";
+        resp = await axios.get(api);
+        this.setState({ posts: resp.data.data.posts });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.setState({ isLoading: false });
+      }
     }
   }
   renderPost = () => {
-    console.log(this.props.user);
     return this.state.posts
       .slice(3)
       .map((post) => (
