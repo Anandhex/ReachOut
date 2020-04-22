@@ -82,7 +82,8 @@ with open("interest_id_dict.pkl","rb") as file:
     interest_id_dict = pickle.load(file)
 
 def get_interests(age,gender):
-    cluster = (cluster_model.predict(np.array(age))[0])
+    arr = np.reshape(age,(1,1))
+    cluster = (cluster_model.predict(arr)[0])
     cluster_interests = cluster_top_interests[cluster]
     interests = list()
     if gender.lower() == "male":
