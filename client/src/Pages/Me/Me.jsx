@@ -36,7 +36,12 @@ export class Me extends Component {
   renderSection = () => {
     switch (this.state.sectionSelected) {
       case "Me":
-        return <MeSection user={this.props.user && this.props.user._id} />;
+        return (
+          <MeSection
+            user={this.props.user && this.props.user._id}
+            {...this.props}
+          />
+        );
       case "Edit Profile":
         return (
           <EditProfile user={this.props.user} setUser={this.props.setUser} />

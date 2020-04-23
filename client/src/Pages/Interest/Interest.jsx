@@ -6,6 +6,7 @@ import ServerResponse from "../../Components/ServerResponse/ServerResponse";
 import axios from "../../../../server/node_modules/axios";
 import { API_BASE_URL } from "../../util/apiUtil";
 import jwt from "../../util/jwt";
+import { toast } from "react-toastify";
 
 export class Interest extends Component {
   constructor(props) {
@@ -31,6 +32,11 @@ export class Interest extends Component {
       this.setState({ selected });
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     }
   }
   interestClicked = (idx) => {

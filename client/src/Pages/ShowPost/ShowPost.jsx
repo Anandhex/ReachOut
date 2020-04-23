@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from "moment";
 import jwt from "../../util/jwt";
 import Loader from "../../Components/Loader/Loader";
+import { toast } from "react-toastify";
 export class ShowPost extends Component {
   constructor(props) {
     super(props);
@@ -38,6 +39,11 @@ export class ShowPost extends Component {
       });
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }
@@ -63,8 +69,14 @@ export class ShowPost extends Component {
           post: resp.data.data.data,
           commentText: "",
         });
+        toast.info("Comment added!");
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       }
     }
   };
@@ -88,8 +100,13 @@ export class ShowPost extends Component {
           editcommentId: null,
           isEdit: false,
         });
+        toast.info("Comment edited!");
       } catch (err) {
-        console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       }
     }
   };
@@ -112,8 +129,14 @@ export class ShowPost extends Component {
         //   console.log(resp.data.data);
         //   this.props.setPost(resp.data.data.post);
         this.props.setUser(resp.data.data.user);
+        toast.info("Post liked!");
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       }
     }
   };
@@ -131,8 +154,14 @@ export class ShowPost extends Component {
           editcommentId: null,
           isEdit: false,
         });
+        toast.info("Comment deleted!");
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       }
     }
   };
@@ -223,15 +252,21 @@ export class ShowPost extends Component {
       }`;
     const headers = jwt.getAuthHeader();
     try {
-      const resp = await axios.delete(api, { headers });
+      await axios.delete(api, { headers });
       this.props.history.goBack();
       this.setState({
         post: null,
         editPost: false,
         editPostContent: null,
       });
+      toast.info("Post deleted!");
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     }
   };
   handleUpdatePost = async () => {
@@ -254,8 +289,14 @@ export class ShowPost extends Component {
         editPost: false,
         editPostContent: null,
       });
+      toast.info("Updated the post!");
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     }
   };
 

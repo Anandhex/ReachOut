@@ -8,6 +8,7 @@ import jwt from "../../util/jwt";
 import Loader from "../../Components/Loader/Loader";
 import interests from "../../util/interest";
 import Post from "../../Components/Post/Post";
+import { toast } from "react-toastify";
 class Welcome extends Component {
   constructor(props) {
     super(props);
@@ -46,6 +47,11 @@ class Welcome extends Component {
       }
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }
@@ -64,9 +70,15 @@ class Welcome extends Component {
           headers,
         });
         this.setState({ friends: resp.data.data });
+        toast.info("Added friend Successfully");
       }
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }
@@ -133,14 +145,20 @@ class Welcome extends Component {
         const userId = jwt.getId();
         const api = API_BASE_URL + `users/${userId}/posts`;
         const headers = jwt.getAuthHeader();
-        const resp = await axios.post(
+        await axios.post(
           api,
           { username, postContent, postTitle, category },
           { headers }
         );
+        toast.info("Post created");
         this.setState({ postContent: "", postTitle: "" });
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       } finally {
         this.setState({ isLoading: false });
       }

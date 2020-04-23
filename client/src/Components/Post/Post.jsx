@@ -4,6 +4,7 @@ import "./Post.css";
 import { API_BASE_URL } from "../../util/apiUtil";
 import jwt from "../../util/jwt";
 import axios from "axios";
+import { toast } from "react-toastify";
 export class Post extends Component {
   handleLike = async (e) => {
     if (
@@ -21,6 +22,7 @@ export class Post extends Component {
         console.log(resp.data.data);
         this.props.setPost(resp.data.data.post);
         this.props.setUser(resp.data.data.user);
+        toast.info("Liked!");
         // .then((resp) => {
         //   console.log(resp.data.data);
         //   this.props.setPost(resp.data.data.post);
@@ -29,6 +31,11 @@ export class Post extends Component {
         // .catch((err) => console.log(err));
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       }
     }
   };

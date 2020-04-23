@@ -6,6 +6,7 @@ import interests from "../../../../../util/interest";
 import { API_BASE_URL } from "../../../../../util/apiUtil";
 import jwt from "../../../../../util/jwt";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export class Preference extends Component {
   constructor(props) {
@@ -47,24 +48,20 @@ export class Preference extends Component {
       try {
         const resp = await axios.patch(api, body, { headers });
         this.props.setUser(resp.data.data.user);
+        toast.info("Updated interests");
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       } finally {
         this.setState({ isLoading: false });
       }
     } else {
-      this.setState(
-        {
-          error: {
-            message: "Selected interests should be greater than 3",
-            messageType: "error",
-          },
-          isLoading: false,
-        },
-        () => {
-          setTimeout(() => this.setState({ error: null }), 3000);
-        }
-      );
+      toast.error("Selected interests should be greater than 3");
+      this.setState({ isLoading: false });
     }
   };
   render() {

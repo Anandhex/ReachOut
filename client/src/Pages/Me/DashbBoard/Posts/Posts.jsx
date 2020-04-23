@@ -3,6 +3,7 @@ import "./Posts.css";
 import Post from "../../../../Components/Post/Post";
 import { API_BASE_URL } from "../../../../util/apiUtil";
 import axios from "axios";
+import { toast } from "react-toastify";
 export class Posts extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +17,11 @@ export class Posts extends Component {
       this.setState({ posts: resp.data.data.posts });
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     }
   }
   setPost = (post) => {

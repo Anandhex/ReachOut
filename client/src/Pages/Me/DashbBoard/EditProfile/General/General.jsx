@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../../../../../util/apiUtil";
 import jwt from "../../../../../util/jwt";
 import ServerResponse from "../../../../../Components/ServerResponse/ServerResponse";
 import Loader from "../../../../../Components/Loader/Loader";
+import { toast } from "react-toastify";
 export class General extends Component {
   constructor(props) {
     super(props);
@@ -47,8 +48,14 @@ export class General extends Component {
       this.setState({
         profile_img: resp.data.data.user.profile_img,
       });
+      toast.info("Image upload successfully!");
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }
@@ -70,24 +77,20 @@ export class General extends Component {
         const headers = jwt.getAuthHeader();
         const resp = await axios.patch(api, body, { headers });
         this.props.setUser(resp.data.data.user);
+        toast.info("User updated successfully!");
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       } finally {
         this.setState({ isLoading: false });
       }
     } else {
-      this.setState(
-        {
-          error: {
-            message: "Please fill all the details",
-            messageType: "error",
-          },
-          isLoading: false,
-        },
-        () => {
-          setTimeout(() => this.setState({ error: null }), 3000);
-        }
-      );
+      toast.error("Enter all fields");
+      this.setState({ isLoading: false });
     }
   };
   render() {

@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../../../../../util/apiUtil";
 import axios from "axios";
 import Loader from "../../../../../Components/Loader/Loader";
 import ServerResponse from "../../../../../Components/ServerResponse/ServerResponse";
+import { toast } from "react-toastify";
 export class ChangePassword extends Component {
   constructor(props) {
     super(props);
@@ -30,9 +31,15 @@ export class ChangePassword extends Component {
       email: this.props.user && this.props.user.email,
     };
     try {
-      const resp = await axios.post(api, body);
+      await axios.post(api, body);
+      toast.info("Succesfully email sent!");
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }

@@ -6,6 +6,7 @@ import jwt from "../../util/jwt";
 import ServerResponse from "../../Components/ServerResponse/ServerResponse";
 import Loader from "../../Components/Loader/Loader";
 import { Redirect } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export class ProfileUpdate extends Component {
   constructor(props) {
@@ -44,8 +45,14 @@ export class ProfileUpdate extends Component {
       this.setState({
         profileImg: resp.data.data.user.profile_img,
       });
+      toast.info("User profile photo updated");
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }
@@ -76,6 +83,11 @@ export class ProfileUpdate extends Component {
         this.props.history.push("/");
       } catch (err) {
         console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
       }
     } else {
       this.setState(

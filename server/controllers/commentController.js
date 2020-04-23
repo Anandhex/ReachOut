@@ -33,7 +33,7 @@ exports.addComment = catchAsync(async (req, res, next) => {
     );
     res.status(201).json({ status: 'success', data: { data: post } });
   } else {
-    return next(new AppError('Comment is inappropriate', 404));
+    return next(new AppError('Comment is inappropriate', 403));
   }
 });
 
@@ -55,7 +55,7 @@ exports.updateComment = catchAsync(async (req, res, next) => {
         let post = await Post.findById(comment.postId).populate('comments');
         res.status(200).json({ status: 'success', data: { data: post } });
       } else {
-        return next(new AppError('Comment is inappropriate', 404));
+        return next(new AppError('Comment is inappropriate', 403));
       }
     } else {
       next(new AppError('Unauthorized. Please login to update the post', 403));

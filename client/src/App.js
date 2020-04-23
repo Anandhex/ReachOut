@@ -77,12 +77,13 @@ class App extends Component {
           <Route
             exact
             path="/signup"
-            render={() => (
+            render={(routeParams) => (
               <SignUp
                 isSignIn={true}
                 setJWTToken={this.setJWTToken}
                 setUser={this.setUser}
                 isAuthenticated={this.isAuthenticated}
+                {...routeParams}
               />
             )}
           />

@@ -4,6 +4,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../../util/apiUtil";
 import Post from "../../Components/Post/Post";
 import Loader from "../../Components/Loader/Loader";
+import { toast } from "react-toastify";
 
 export class ShowPostsByCategory extends Component {
   constructor(props) {
@@ -20,6 +21,11 @@ export class ShowPostsByCategory extends Component {
       this.setState({ posts: resp.data.data.posts });
     } catch (err) {
       console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
     } finally {
       this.setState({ isLoading: false });
     }

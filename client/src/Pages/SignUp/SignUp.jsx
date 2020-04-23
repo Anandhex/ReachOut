@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../../util/apiUtil";
 import Loader from "../../Components/Loader/Loader";
 import { Redirect } from "react-router-dom";
 import jwt from "../../util/jwt";
+import { toast } from "react-toastify";
 
 class SignUp extends Component {
   constructor(props) {
@@ -27,81 +28,95 @@ class SignUp extends Component {
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  toggleLoadingState = () => {
-    this.setState({ isLoading: !this.state.isLoading });
-  };
-  handleClick = async () => {
-    const {
-      username,
-      email,
-      password,
-      passwordConfirm,
-      age,
-      gender,
-    } = this.state;
-    let api = API_BASE_URL;
 
-    if (
-      this.props.isSignIn &&
-      username &&
-      email &&
-      password &&
-      passwordConfirm &&
-      age &&
-      gender
-    ) {
-      api = API_BASE_URL + "users/signup";
-      this.toggleLoadingState();
-      try {
-        let resp = await axios.post(api, {
-          username,
-          email,
-          password,
-          passwordConfirm,
-          age,
-          gender,
-        });
-        this.toggleLoadingState();
-        const data = resp.data;
-        jwt.setJWt(data.token);
-        this.props.setUser(data.data.user);
-        this.props.history.push("/selectInterst");
-      } catch (err) {
-        console.log(err);
-      }
-    } else if (this.props.isSignIn === false && username && email && password) {
-      api = API_BASE_URL + "users/login";
-      try {
-        let resp = await axios.post(api, {
-          username,
-          email,
-          password,
-        });
-        this.toggleLoadingState();
-        const data = resp.data;
-        jwt.setJWt(data.token);
-        this.props.setUser(data.data.user);
-        jwt.setBoarded(data.data.user.isBoarded);
-        if (data.data.user.isBoarded) {
-          this.props.history.push("/");
-        } else {
+  handleClick = async () => {
+    try {
+      const {
+        username,
+        email,
+        password,
+        passwordConfirm,
+        age,
+        gender,
+      } = this.state;
+      let api = API_BASE_URL;
+
+      if (
+        this.props.isSignIn &&
+        username &&
+        email &&
+        password &&
+        passwordConfirm &&
+        age &&
+        gender
+      ) {
+        api = API_BASE_URL + "users/signup";
+        try {
+          this.setState({ isLoading: true });
+          let resp = await axios.post(api, {
+            username,
+            email,
+            password,
+            passwordConfirm,
+            age,
+            gender,
+          });
+          const data = resp.data;
+          jwt.setJWt(data.token);
+          this.props.setUser(data.data.user);
+          console.log(this.props);
           this.props.history.push("/selectInterst");
+          toast.success("Successfully signed in!");
+        } catch (err) {
+          console.log(err);
+          if (!err.response) {
+            toast.error("Something went wrong!");
+          } else {
+            toast.error(err.response.data.message);
+          }
+        } finally {
+          this.setState({ isLoading: false });
         }
-      } catch (err) {
-        console.log(err);
+      } else if (
+        this.props.isSignIn === false &&
+        username &&
+        email &&
+        password
+      ) {
+        api = API_BASE_URL + "users/login";
+        try {
+          this.setState({ isLoading: true });
+          let resp = await axios.post(api, {
+            username,
+            email,
+            password,
+          });
+          const data = resp.data;
+          jwt.setJWt(data.token);
+          this.props.setUser(data.data.user);
+          jwt.setBoarded(data.data.user.isBoarded);
+          if (data.data.user.isBoarded) {
+            this.props.history.push("/");
+          } else {
+            this.props.history.push("/selectInterst");
+          }
+          toast.success("Successfully logged in!");
+        } catch (err) {
+          console.log(err.response);
+          if (!err.response) {
+            toast.error("Something went wrong!");
+          } else {
+            toast.error(err.response.data.message);
+          }
+        } finally {
+          this.setState({ isLoading: false });
+        }
+      } else {
+        toast.error("Enter all the fields");
       }
-    } else {
-      this.setState(
-        {
-          error: { message: "Enter all the fields", messageType: "error" },
-        },
-        () => {
-          this.toggleLoadingState();
-          setTimeout(() => this.setState({ error: null }), 3000);
-        }
-      );
+    } catch (err) {
+      console.log(err);
     }
-    this.toggleLoadingState();
   };
 
   render() {
