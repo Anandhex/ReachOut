@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/ReachOut/static/css/main.f0f98e3a.chunk.css",
+    "main.js": "/ReachOut/static/js/main.645a2b2c.chunk.js",
+    "main.js.map": "/ReachOut/static/js/main.645a2b2c.chunk.js.map",
+    "runtime-main.js": "/ReachOut/static/js/runtime-main.e85d0977.js",
+    "runtime-main.js.map": "/ReachOut/static/js/runtime-main.e85d0977.js.map",
+    "static/css/2.f42e59c9.chunk.css": "/ReachOut/static/css/2.f42e59c9.chunk.css",
+    "static/js/2.6a856fd7.chunk.js": "/ReachOut/static/js/2.6a856fd7.chunk.js",
+    "static/js/2.6a856fd7.chunk.js.map": "/ReachOut/static/js/2.6a856fd7.chunk.js.map",
+    "index.html": "/ReachOut/index.html",
+    "precache-manifest.47e88e2ad60ca9b4738a14f1c2b1565e.js": "/ReachOut/precache-manifest.47e88e2ad60ca9b4738a14f1c2b1565e.js",
+    "service-worker.js": "/ReachOut/service-worker.js",
+    "static/css/2.f42e59c9.chunk.css.map": "/ReachOut/static/css/2.f42e59c9.chunk.css.map",
+    "static/css/main.f0f98e3a.chunk.css.map": "/ReachOut/static/css/main.f0f98e3a.chunk.css.map",
+    "static/js/2.6a856fd7.chunk.js.LICENSE.txt": "/ReachOut/static/js/2.6a856fd7.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e85d0977.js",
+    "static/css/2.f42e59c9.chunk.css",
+    "static/js/2.6a856fd7.chunk.js",
+    "static/css/main.f0f98e3a.chunk.css",
+    "static/js/main.645a2b2c.chunk.js"
+  ]
+}
