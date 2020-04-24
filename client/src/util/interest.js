@@ -1,8 +1,8 @@
 export default [
   "Cyberbullying",
   "Drugs and alcohol abuse",
-  "Gender-discrimination",
-  "Government-policy",
+  "Gender discrimination",
+  "Government policies",
   "Illiteracy",
   "Obesity and greed",
   "Poverty",

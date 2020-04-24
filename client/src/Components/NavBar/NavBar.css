@@ -44,3 +44,12 @@
   border-radius: 50%;
   border: 2px solid white;
 }
+
+.recommender-btn {
+  color: white;
+  cursor: pointer;
+}
+
+.recommender-btn-enable {
+  color: var(--secondary-color) !important;
+}

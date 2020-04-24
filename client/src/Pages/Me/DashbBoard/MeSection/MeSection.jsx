@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../../../../util/apiUtil";
 import axios from "axios";
 import Loader from "../../../../Components/Loader/Loader";
 import Post from "../../../../Components/Post/Post";
+import { toast } from "react-toastify";
 
 export class MeSection extends Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export class MeSection extends Component {
       isLoading: false,
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     $(".dashboard-count").each(function () {
       var $this = $(this);
       $({ Counter: 0 }).animate(
@@ -35,24 +36,27 @@ export class MeSection extends Component {
     if (!userId) {
       userId = this.props.match && this.props.match.params.id;
     }
-    console.log(userId);
     if (userId) {
-      let api = API_BASE_URL + `users/${userId}`;
-      axios
-        .get(api)
-        .then((resp) =>
-          this.setState({ user: resp.data.data.user, isLoading: false })
-        )
-        .catch((err) => console.log(err));
-      api += "/posts?sort=-likes";
-      axios
-        .get(api)
-        .then((resp) => this.setState({ posts: resp.data.data.posts }))
-        .catch((err) => console.log(err));
+      try {
+        let api = API_BASE_URL + `users/${userId._id}`;
+        let resp = await axios.get(api);
+        this.setState({ user: resp.data.data.user });
+        api += "/posts?sort=-likes";
+        resp = await axios.get(api);
+        this.setState({ posts: resp.data.data.posts });
+      } catch (err) {
+        console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
+      } finally {
+        this.setState({ isLoading: false });
+      }
     }
   }
   renderPost = () => {
-    console.log(this.props.user);
     return this.state.posts
       .slice(3)
       .map((post) => (
@@ -72,13 +76,22 @@ export class MeSection extends Component {
         />
       ));
   };
+  handleComment = (e, id) => {
+    e.stopPropagation();
+    this.props.history.push(`/posts/${id}`);
+  };
 
   renderTopPosts = () => {
     return (
       <>
         <div className="dashboard-post-container">
           {this.state.posts.slice(0, 3).map((post, idx) => (
-            <div key={idx} id={idx} className="dashboard-post">
+            <div
+              key={idx}
+              id={idx}
+              className="dashboard-post"
+              onClick={(e) => this.handleComment(e, post._id)}
+            >
               <div className="dashboard-post-title">{post.postTitle}</div>
               <div className="dashboard-post-body">
                 {post.postContent.slice(0, 180) + "..."}
@@ -124,6 +137,10 @@ export class MeSection extends Component {
       </>
     );
   };
+  handleCategory = (e, category) => {
+    e.stopPropagation();
+    this.props.history.push(`/specficPostCategory/${category}`);
+  };
   render() {
     return (
       <>
@@ -145,7 +162,11 @@ export class MeSection extends Component {
                 this.state.user.areaOfInterest
                   .filter((interest) => interest)
                   .map((interest) => (
-                    <div className="top-interests-follow" key={interest}>
+                    <div
+                      className="top-interests-follow"
+                      key={interest}
+                      onClick={(e) => this.handleCategory(e, interest)}
+                    >
                       {interest}
                     </div>
                   ))}

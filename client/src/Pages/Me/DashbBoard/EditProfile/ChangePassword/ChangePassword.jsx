@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../../../../../util/apiUtil";
 import axios from "axios";
 import Loader from "../../../../../Components/Loader/Loader";
 import ServerResponse from "../../../../../Components/ServerResponse/ServerResponse";
+import { toast } from "react-toastify";
 export class ChangePassword extends Component {
   constructor(props) {
     super(props);
@@ -23,30 +24,25 @@ export class ChangePassword extends Component {
         return "Please wait";
     }
   };
-  handleClick = () => {
+  handleClick = async () => {
     this.setState({ count: this.state.count + 1, isLoading: true });
     const api = API_BASE_URL + `users/forgotPassword`;
     let body = {
       email: this.props.user && this.props.user.email,
     };
-    axios
-      .post(api, body)
-      .then((resp) => {
-        console.log(resp);
-        this.setState({ isLoading: false });
-      })
-      .catch((error) => {
-        this.setState(
-          {
-            error: { message: error.response.message, messageType: "error" },
-            isLoading: false,
-          },
-          () => {
-            setTimeout(() => this.setState({ error: null }), 3000);
-          }
-        );
-        console.log(error);
-      });
+    try {
+      await axios.post(api, body);
+      toast.info("Succesfully email sent!");
+    } catch (err) {
+      console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   render() {

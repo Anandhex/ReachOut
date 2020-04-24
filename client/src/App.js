@@ -23,6 +23,7 @@ class App extends Component {
     this.state = {
       user: null,
       jwt: null,
+      recommender: false,
     };
   }
   componentDidMount() {
@@ -48,16 +49,25 @@ class App extends Component {
   logout = () => {
     this.setState({ user: null });
   };
+  enableRecommender = (enable) => {
+    this.setState({ recommender: enable });
+  };
   render() {
     return (
       <>
-        <NavBar user={this.state.user} logout={this.handleLogout} />
+        <NavBar
+          user={this.state.user}
+          logout={this.handleLogout}
+          recommender={this.state.recommender}
+          enableRecommender={this.enableRecommender}
+        />
         <Switch>
           <Route
             exact
             path="/"
             render={(routeParams) => (
               <Home
+                isRecommended={this.state.recommender}
                 user={this.state.user}
                 setUser={this.setUser}
                 {...routeParams}
@@ -67,12 +77,13 @@ class App extends Component {
           <Route
             exact
             path="/signup"
-            render={() => (
+            render={(routeParams) => (
               <SignUp
                 isSignIn={true}
                 setJWTToken={this.setJWTToken}
                 setUser={this.setUser}
                 isAuthenticated={this.isAuthenticated}
+                {...routeParams}
               />
             )}
           />
@@ -95,7 +106,12 @@ class App extends Component {
               <Logout logout={this.logout} {...routeParams} />
             )}
           />
-          <Route exact path="/selectInterst" component={Interest} />
+          <Route
+            exact
+            path="/selectInterst"
+            user={this.state.user}
+            component={Interest}
+          />
           <Route
             exact
             path="/profileUpdate"

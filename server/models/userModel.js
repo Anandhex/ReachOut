@@ -18,6 +18,10 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, 'Please provide with a mail']
     },
+    gender: {
+      type: String,
+      default: 'Male'
+    },
     profile_img: String, //url of the image   |||Should think how we have store the image|||
     password: {
       type: String,

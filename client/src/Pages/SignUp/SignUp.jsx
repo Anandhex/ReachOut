@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../../util/apiUtil";
 import Loader from "../../Components/Loader/Loader";
 import { Redirect } from "react-router-dom";
 import jwt from "../../util/jwt";
+import { toast } from "react-toastify";
 
 class SignUp extends Component {
   constructor(props) {
@@ -16,6 +17,8 @@ class SignUp extends Component {
       email: "",
       password: "",
       passwordConfirm: "",
+      age: "",
+      gender: "Male",
       error: null,
       isLoading: false,
       isBoarded: false,
@@ -25,60 +28,69 @@ class SignUp extends Component {
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  toggleLoadingState = () => {
-    this.setState({ isLoading: !this.state.isLoading });
-  };
-  handleClick = () => {
-    const { username, email, password, passwordConfirm } = this.state;
-    let api = API_BASE_URL;
 
-    if (
-      this.props.isSignIn &&
-      username &&
-      email &&
-      password &&
-      passwordConfirm
-    ) {
-      api = API_BASE_URL + "users/signup";
-      this.toggleLoadingState();
-      axios
-        .post(api, {
-          username,
-          email,
-          password,
-          passwordConfirm,
-        })
-        .then((resp) => {
-          this.toggleLoadingState();
+  handleClick = async () => {
+    try {
+      const {
+        username,
+        email,
+        password,
+        passwordConfirm,
+        age,
+        gender,
+      } = this.state;
+      let api = API_BASE_URL;
+
+      if (
+        this.props.isSignIn &&
+        username &&
+        email &&
+        password &&
+        passwordConfirm &&
+        age &&
+        gender
+      ) {
+        api = API_BASE_URL + "users/signup";
+        try {
+          this.setState({ isLoading: true });
+          let resp = await axios.post(api, {
+            username,
+            email,
+            password,
+            passwordConfirm,
+            age,
+            gender,
+          });
           const data = resp.data;
           jwt.setJWt(data.token);
           this.props.setUser(data.data.user);
+          console.log(this.props);
           this.props.history.push("/selectInterst");
-        })
-        .catch((error) => {
-          let data;
-          if (error.response) data = error.response;
-          else data = { message: "Something went wrong!" };
-          this.setState(
-            {
-              error: { message: data.message, messageType: "error" },
-            },
-            () => {
-              this.toggleLoadingState();
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
-        });
-    } else if (this.props.isSignIn === false && username && email && password) {
-      api = API_BASE_URL + "users/login";
-      axios
-        .post(api, {
-          username,
-          email,
-          password,
-        })
-        .then((resp) => {
-          this.toggleLoadingState();
+          toast.success("Successfully signed in!");
+        } catch (err) {
+          console.log(err);
+          if (!err.response) {
+            toast.error("Something went wrong!");
+          } else {
+            toast.error(err.response.data.message);
+          }
+        } finally {
+          this.setState({ isLoading: false });
+        }
+      } else if (
+        this.props.isSignIn === false &&
+        username &&
+        email &&
+        password
+      ) {
+        api = API_BASE_URL + "users/login";
+        try {
+          this.setState({ isLoading: true });
+          let resp = await axios.post(api, {
+            username,
+            email,
+            password,
+          });
           const data = resp.data;
           jwt.setJWt(data.token);
           this.props.setUser(data.data.user);
@@ -88,40 +100,23 @@ class SignUp extends Component {
           } else {
             this.props.history.push("/selectInterst");
           }
-        })
-        .catch((error) => {
-          let data;
-          if (error.response) {
-            data = error.response;
-            if (/^4*/.test(data.status)) {
-              data = data.data;
-            }
+          toast.success("Successfully logged in!");
+        } catch (err) {
+          console.log(err.response);
+          if (!err.response) {
+            toast.error("Something went wrong!");
           } else {
-            data = { message: "Something went wrong!" };
+            toast.error(err.response.data.message);
           }
-
-          this.setState(
-            {
-              error: { message: data.message, messageType: "error" },
-            },
-            () => {
-              this.toggleLoadingState();
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
-        });
-    } else {
-      this.setState(
-        {
-          error: { message: "Enter all the fields", messageType: "error" },
-        },
-        () => {
-          this.toggleLoadingState();
-          setTimeout(() => this.setState({ error: null }), 3000);
+        } finally {
+          this.setState({ isLoading: false });
         }
-      );
+      } else {
+        toast.error("Enter all the fields");
+      }
+    } catch (err) {
+      console.log(err);
     }
-    this.toggleLoadingState();
   };
 
   render() {
@@ -182,6 +177,35 @@ class SignUp extends Component {
                   value={this.state.passwordConfirm}
                   onChange={(e) => this.handleChange(e)}
                 />
+              </div>
+              <div className="SignUp-form-input-field">
+                <label htmlFor="passwordConfirm">Age </label>
+                <input
+                  type="number"
+                  name="age"
+                  id="age"
+                  min="18"
+                  max="99"
+                  placeholder="Enter your age"
+                  value={this.state.age}
+                  onChange={(e) => this.handleChange(e)}
+                />
+              </div>
+              <div className="SignUp-form-input-field">
+                <select
+                  value={this.state.gender}
+                  name="gender"
+                  id="gender"
+                  className="post-category"
+                  onChange={(e) => this.handleChange(e)}
+                >
+                  <option className="option-category" value={"Male"}>
+                    Male
+                  </option>
+                  <option className="option-category" value={"Female"}>
+                    Female
+                  </option>
+                </select>
               </div>
               <div className="SignUp-form-button">
                 <input

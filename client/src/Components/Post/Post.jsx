@@ -4,26 +4,39 @@ import "./Post.css";
 import { API_BASE_URL } from "../../util/apiUtil";
 import jwt from "../../util/jwt";
 import axios from "axios";
+import { toast } from "react-toastify";
 export class Post extends Component {
-  handleLike = (e) => {
+  handleLike = async (e) => {
     if (
       this.props.user &&
       !this.props.user.liked.includes(this.props.post._id)
     ) {
-      e.target.src = e.target.src.replace(/\/[^\/]*$/, "/like.svg");
-      const api =
-        API_BASE_URL +
-        `users/${this.props.user._id}/posts/${this.props.post._id}`;
-      const headers = jwt.getAuthHeader();
-      const likes = this.props.post.likes + 1;
-      axios
-        .patch(api, likes, { headers })
-        .then((resp) => {
-          console.log(resp.data.data);
-          this.props.setPost(resp.data.data.post);
-          this.props.setUser(resp.data.data.user);
-        })
-        .catch((err) => console.log(err));
+      try {
+        e.target.src = e.target.src.replace(/\/[^\/]*$/, "/like.svg");
+        const api =
+          API_BASE_URL +
+          `users/${this.props.user._id}/posts/${this.props.post._id}`;
+        const headers = jwt.getAuthHeader();
+        const likes = this.props.post.likes + 1;
+        const resp = await axios.patch(api, likes, { headers });
+        console.log(resp.data.data);
+        this.props.setPost(resp.data.data.post);
+        this.props.setUser(resp.data.data.user);
+        toast.info("Liked!");
+        // .then((resp) => {
+        //   console.log(resp.data.data);
+        //   this.props.setPost(resp.data.data.post);
+        //   this.props.setUser(resp.data.data.user);
+        // })
+        // .catch((err) => console.log(err));
+      } catch (err) {
+        console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
+      }
     }
   };
 

@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../../../../../util/apiUtil";
 import jwt from "../../../../../util/jwt";
 import ServerResponse from "../../../../../Components/ServerResponse/ServerResponse";
 import Loader from "../../../../../Components/Loader/Loader";
+import { toast } from "react-toastify";
 export class General extends Component {
   constructor(props) {
     super(props);
@@ -41,80 +42,55 @@ export class General extends Component {
       "Accept-Language": "en-US,en;q=0.8",
       "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
     };
-    const resp = axios.post(api, data, { headers });
-    resp
-      .then((resp) => {
-        this.props.setUser(resp.data.data.user);
-        this.setState({
-          profile_img: resp.data.data.user.profile_img,
-          isLoading: false,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState(
-          {
-            error: {
-              message: error.response
-                ? error.response.data.message
-                : "Something went wrong!",
-              messageType: "error",
-            },
-          },
-          () => {
-            setTimeout(
-              () => this.setState({ error: "", isLoading: false }),
-              3000
-            );
-          }
-        );
+    try {
+      const resp = await axios.post(api, data, { headers });
+      this.props.setUser(resp.data.data.user);
+      this.setState({
+        profile_img: resp.data.data.user.profile_img,
       });
+      toast.info("Image upload successfully!");
+    } catch (err) {
+      console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  handleClick = () => {
+  handleClick = async () => {
     const { username, dob, profile_img } = this.state;
     if (username && dob && profile_img) {
-      this.setState({ isLoading: true });
-      let api = API_BASE_URL + `users/${jwt.getId()}`;
-      let body = {
-        username,
-        dob,
-        profile_img,
-      };
-      const headers = jwt.getAuthHeader();
-      axios
-        .patch(api, body, { headers })
-        .then((resp) => {
-          this.props.setUser(resp.data.data.user);
-          this.setState({ isLoading: false });
-        })
-        .catch((error) => {
-          this.setState(
-            {
-              error: { message: error.response.message, messageType: "error" },
-              isLoading: false,
-            },
-            () => {
-              setTimeout(() => this.setState({ error: null }), 3000);
-            }
-          );
-          console.log(error);
-        });
-    } else {
-      this.setState(
-        {
-          error: {
-            message: "Please fill all the details",
-            messageType: "error",
-          },
-          isLoading: false,
-        },
-        () => {
-          setTimeout(() => this.setState({ error: null }), 3000);
+      try {
+        this.setState({ isLoading: true });
+        let api = API_BASE_URL + `users/${jwt.getId()}`;
+        let body = {
+          username,
+          dob,
+          profile_img,
+        };
+        const headers = jwt.getAuthHeader();
+        const resp = await axios.patch(api, body, { headers });
+        this.props.setUser(resp.data.data.user);
+        toast.info("User updated successfully!");
+      } catch (err) {
+        console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
         }
-      );
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    } else {
+      toast.error("Enter all fields");
+      this.setState({ isLoading: false });
     }
   };
   render() {

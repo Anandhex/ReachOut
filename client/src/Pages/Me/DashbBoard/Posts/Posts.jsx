@@ -3,21 +3,26 @@ import "./Posts.css";
 import Post from "../../../../Components/Post/Post";
 import { API_BASE_URL } from "../../../../util/apiUtil";
 import axios from "axios";
+import { toast } from "react-toastify";
 export class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = { posts: [] };
   }
 
-  componentDidMount() {
-    const category = this.props.match && this.props.match.params.category;
-    const api = API_BASE_URL + `users/posts?userId=${this.props.user._id}`;
-    axios
-      .get(api)
-      .then((resp) => {
-        this.setState({ posts: resp.data.data.posts });
-      })
-      .catch((err) => console.log(err));
+  async componentDidMount() {
+    try {
+      const api = API_BASE_URL + `users/posts?userId=${this.props.user._id}`;
+      const resp = await axios.get(api);
+      this.setState({ posts: resp.data.data.posts });
+    } catch (err) {
+      console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
+    }
   }
   setPost = (post) => {
     this.setState({

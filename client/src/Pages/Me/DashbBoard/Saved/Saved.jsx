@@ -4,22 +4,27 @@ import { API_BASE_URL } from "../../../../util/apiUtil";
 import axios from "axios";
 import Post from "../../../../Components/Post/Post";
 import jwt from "../../../../util/jwt";
+import { toast } from "react-toastify";
 export class Saved extends Component {
   constructor(props) {
     super(props);
     this.state = { posts: [] };
   }
 
-  componentDidMount() {
-    const category = this.props.match && this.props.match.params.category;
+  async componentDidMount() {
     const api = API_BASE_URL + `users/getLikedPost`;
     const headers = jwt.getAuthHeader();
-    axios
-      .get(api, { headers })
-      .then((resp) => {
-        this.setState({ posts: resp.data.data.post });
-      })
-      .catch((err) => console.log(err));
+    try {
+      const resp = await axios.get(api, { headers });
+      this.setState({ posts: resp.data.data.post });
+    } catch (err) {
+      console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
+    }
   }
   setPost = (post) => {
     this.setState({

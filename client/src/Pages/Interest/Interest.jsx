@@ -3,6 +3,10 @@ import React, { Component } from "react";
 import "./Interest.css";
 import interests from "../../util/interest";
 import ServerResponse from "../../Components/ServerResponse/ServerResponse";
+import axios from "../../../../server/node_modules/axios";
+import { API_BASE_URL } from "../../util/apiUtil";
+import jwt from "../../util/jwt";
+import { toast } from "react-toastify";
 
 export class Interest extends Component {
   constructor(props) {
@@ -11,6 +15,29 @@ export class Interest extends Component {
       selected: ["", "", "", "", "", "", "", "", "", "", "", "", "", ""],
       error: "",
     };
+  }
+  async componentDidMount() {
+    try {
+      const headers = jwt.getAuthHeader();
+      let api = API_BASE_URL + `users/${jwt.getId()}/recommendedInterest`;
+      const { data } = await axios.get(api, { headers });
+      const interest = data.data.data["Final Interests"];
+      const selected = this.state.selected;
+      interest.forEach((int) => {
+        const idx = interests.indexOf(int);
+        if (idx > 0) {
+          selected[idx] = interests[idx];
+        }
+      });
+      this.setState({ selected });
+    } catch (err) {
+      console.log(err);
+      if (!err.response) {
+        toast.error("Something went wrong!");
+      } else {
+        toast.error(err.response.data.message);
+      }
+    }
   }
   interestClicked = (idx) => {
     if (this.state.selected[idx]) {
