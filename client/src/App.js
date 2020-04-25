@@ -16,6 +16,7 @@ import Me from "./Pages/Me/Me";
 import MeSection from "./Pages/Me/DashbBoard/MeSection/MeSection";
 import ShowPostsByCategory from "./Pages/ShowPostsByCategory/ShowPostsByCategory";
 import ShowPost from "./Pages/ShowPost/ShowPost";
+import About from "./Pages/About/About";
 
 class App extends Component {
   constructor(props) {
@@ -157,6 +158,7 @@ class App extends Component {
               />
             )}
           />
+          <Route exact path="/about" component={About} />
           <Route path="*">
             <Error />
           </Route>

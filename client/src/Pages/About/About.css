@@ -1,0 +1,25 @@
+.main-page-header {
+  text-align: center;
+}
+.category-sub {
+  margin: 1.2rem;
+  font-size: 2rem;
+  font-variant: small-caps;
+  text-shadow: 1px 8px 7px grey;
+  text-align: center;
+}
+
+.sections {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 1.2rem;
+}
+.sections img {
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+}
+.section-content {
+  padding: 1.4rem;
+  font-variant: small-caps;
+}

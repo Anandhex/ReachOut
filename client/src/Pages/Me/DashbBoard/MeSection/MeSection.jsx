@@ -47,15 +47,18 @@ export class MeSection extends Component {
           API_BASE_URL +
           `users/getUserStats/${userId._id ? userId._id : userId}`;
         let resp = await axios.get(api);
-        const {
-          totalPost,
-          totalComments,
-          totalLikes,
-        } = resp.data.data.userStats[0];
-        this.setState({ totalPost, totalLikes, totalComments }, () => {
-          this.startCount();
-        });
-        console.log(userId, "userid");
+        const data = resp.data.data.userStats[0];
+        if (!data) {
+        } else {
+          const {
+            totalPost,
+            totalComments,
+            totalLikes,
+          } = resp.data.data.userStats[0];
+          this.setState({ totalPost, totalLikes, totalComments }, () => {
+            this.startCount();
+          });
+        }
         api = API_BASE_URL + `users/${userId._id ? userId._id : userId}`;
         resp = await axios.get(api);
         this.setState({ user: resp.data.data.user });
