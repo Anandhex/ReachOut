@@ -2,7 +2,7 @@
   "name": "reachout",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://Anandhex.github.io/ReachOut",
+  "homepage": "http://Anandhex.github.io/",
   "dependencies": {
     "axios": "^0.19.2",
     "jquery": "^3.4.1",
