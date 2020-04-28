@@ -136,7 +136,7 @@ class App extends Component {
             path="/user/:id"
             render={(routeParams) => (
               <MeSection
-                currentUser={this.props.user}
+                currentUser={this.props.userç}
                 {...routeParams}
                 isNotUser={true}
               />
