@@ -158,6 +158,9 @@ export class MeSection extends Component {
       </>
     );
   };
+  renderFollowButton = () => {
+    console.log(this.props);
+  };
   handleCategory = (e, category) => {
     e.stopPropagation();
     this.props.history.push(`/specficPostCategory/${category}`);
@@ -219,6 +222,7 @@ export class MeSection extends Component {
               <div className="dashboard-count dashboard-dislikes">1</div>
             </div> */}
             </div>
+            {this.props.isNotUser ? this.renderFollowButton() : ""}
             <div className="dashboard-top-posts-container">
               <div className="dashboard-top-posts-header">Top Posts</div>
             </div>

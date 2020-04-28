@@ -6,6 +6,7 @@ import Friends from "./DashbBoard/Friends/Friends";
 import Posts from "./DashbBoard/Posts/Posts";
 import Saved from "./DashbBoard/Saved/Saved";
 import Error from "../Error/Error";
+import { Follower } from "./DashbBoard/Follower/Follower";
 
 export class Me extends Component {
   constructor(props) {
@@ -58,6 +59,8 @@ export class Me extends Component {
         return <Posts user={this.props.user} {...this.props} />;
       case "Saved":
         return <Saved user={this.props.user} {...this.props} />;
+      case "Followers":
+        return <Follower user={this.props.user} {...this.props} />;
       default:
         return <Error />;
     }
@@ -87,6 +90,9 @@ export class Me extends Component {
               <div className="Me-side-bar-sub-section">
                 <div id="Friends" onClick={(e) => this.setSelectedSection(e)}>
                   Friends
+                </div>
+                <div id="Followers" onClick={(e) => this.setSelectedSection(e)}>
+                  Follower
                 </div>
                 <div id="Posts" onClick={(e) => this.setSelectedSection(e)}>
                   Posts

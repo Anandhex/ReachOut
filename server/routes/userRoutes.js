@@ -9,6 +9,7 @@ const {
   updateUser,
   deleteUser,
   addFriend,
+  getUserFollower,
   getFriends,
   getFriendsRecommendationList,
   getInterestRecommendation,
@@ -52,6 +53,7 @@ router
   .route('/friends/:userId')
   .patch(protect, addFriend)
   .delete(protect, deleteFriend);
+router.get('/getFollowers/:userId', getUserFollower);
 router
   .route('/getFriendRecommendation')
   .get(protect, getFriendsRecommendationList);

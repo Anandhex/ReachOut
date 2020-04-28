@@ -70,6 +70,10 @@ export class ShowPost extends Component {
           commentText: "",
         });
         toast.info("Comment added!");
+        const message = resp.data.data.message;
+        if (message) {
+          toast.error(message);
+        }
       } catch (err) {
         console.log(err);
         if (!err.response) {
@@ -101,6 +105,11 @@ export class ShowPost extends Component {
           isEdit: false,
         });
         toast.info("Comment edited!");
+        const message = resp.data.data.message;
+        console.log(message);
+        if (message) {
+          toast.error(message);
+        }
       } catch (err) {
         if (!err.response) {
           toast.error("Something went wrong!");
@@ -290,6 +299,10 @@ export class ShowPost extends Component {
         editPostContent: null,
       });
       toast.info("Updated the post!");
+      const message = resp.data.data.message;
+      if (message) {
+        toast.error(message);
+      }
     } catch (err) {
       console.log(err);
       if (!err.response) {

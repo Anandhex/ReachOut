@@ -56,7 +56,42 @@ class Welcome extends Component {
       this.setState({ isLoading: false });
     }
   }
-
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevProps.isRecommended !== this.props.isRecommended) {
+      let resp;
+      try {
+        this.setState({ isLoading: true });
+        let api = API_BASE_URL + "users";
+        const headers = jwt.getAuthHeader();
+        if (this.props.user) {
+          resp = await axios.get(api + "/getFriendRecommendation", {
+            headers,
+          });
+          this.setState({ friends: resp.data.data });
+          api =
+            api +
+            `/${jwt.getId()}/posts/getRecommendPost${
+              this.props.isRecommended ? "?recommend=true" : ""
+            }`;
+          resp = await axios.get(api, { headers });
+          this.setState({ posts: resp.data.data.posts });
+        } else {
+          api = API_BASE_URL + "users/posts";
+          resp = await axios.get(api);
+          this.setState({ posts: resp.data.data.posts });
+        }
+      } catch (err) {
+        console.log(err);
+        if (!err.response) {
+          toast.error("Something went wrong!");
+        } else {
+          toast.error(err.response.data.message);
+        }
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    }
+  }
   addFriend = async (e, id) => {
     try {
       e.stopPropagation();

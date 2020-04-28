@@ -31,18 +31,30 @@ exports.getUserPosts = catchAsync(async (req, res, next) => {
 
 exports.getRecommendPosts = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
-  let resp = await axios.get(
-    `http://127.0.0.1:5001/recommend-interest?interests=${req.user.areaOfInterest
-      .filter(interest => interest)
-      .join(':')}}`
-  );
-  let interests = resp.data.interests;
-  interests.push(...req.user.areaOfInterest);
-  interests = interests.filter(interest => interest);
+  let interests = [];
+  if (req.query.recommend) {
+    console.log('recommended');
+    let resp = await axios.get(
+      `http://127.0.0.1:5001/recommend-interest?interests=${req.user.areaOfInterest
+        .filter(interest => interest)
+        .join(':')}}`
+    );
+    interests = resp.data.interests;
+    interests.push(...req.user.areaOfInterest);
+    interests = interests.filter(interest => interest);
+  }
+
   console.log(interests);
-  const posts = await Post.find({
-    $and: [{ userId: { $nin: userId } }, { category: { $in: interests } }]
-  });
+  let posts;
+  if (interests.lenght)
+    posts = await Post.find({
+      $and: [{ userId: { $nin: userId } }, { category: { $in: interests } }]
+    });
+  else {
+    posts = await Post.find({
+      $and: [{ userId: { $nin: userId } }]
+    });
+  }
   res.status(200).json({ status: 'success', data: { posts } });
 });
 
@@ -68,18 +80,20 @@ exports.getLikedPost = catchAsync(async (req, res, next) => {
 
 exports.addPost = catchAsync(async (req, res, next) => {
   req.body.userId = req.params.userId ? req.params.userId : req.user._id;
+  console.log('here is the problem');
+  const string = encodeURI(req.body.postContent);
+
   const resp = await axios.get(
-    `http://127.0.0.1:5001/predict-sentiment?comment=${req.body.postContent}`
+    `http://127.0.0.1:5001/predict-sentiment?comment=${string}`
   );
+  console.log(resp);
   if (req.user._id.equals(req.body.userId)) {
-    if (resp.data.Sentiment === 'Positive') {
-      const post = await Post.create(req.body);
-      res.status(201).json({ status: 'success', data: { data: post } });
-    } else {
-      return next(
-        new AppError('The post is not appropriate to be posted', 403)
-      );
+    const post = await Post.create(req.body);
+    let message;
+    if (resp.data.Sentiment === 'Negative') {
+      message = 'Please refrain from typing such post/comments';
     }
+    res.status(201).json({ status: 'success', data: { data: post, message } });
   } else {
     next(new AppError('Unauthorized access', 403));
   }
@@ -102,18 +116,21 @@ exports.updatePost = catchAsync(async (req, res, next) => {
         });
       } else if (req.user._id.equals(post.userId)) {
         const resp = await axios.get(
-          `http://127.0.0.1:5001/predict-sentiment?comment=${req.body.postContent}`
+          `http://127.0.0.1:5001/predict-sentiment?comment=${encodeURI(
+            req.body.postContent
+          )}`
         );
-        if (resp.data.Sentiment === 'Positive') {
-          post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
-            new: true
-          });
-        } else {
-          return next(
-            new AppError('The post is not appropriate to be updated', 403)
-          );
+        post = await Post.findByIdAndUpdate(req.params.postId, req.body, {
+          new: true
+        });
+        let message;
+        if (resp.data.Sentiment === 'Negative') {
+          message = 'Please refrain from typing such post/comments';
         }
-        res.status(200).json({ status: 'success', data: { data: post } });
+
+        res
+          .status(200)
+          .json({ status: 'success', data: { data: post, message } });
       } else {
         next(
           new AppError('Unauthorized. Please login to update the post', 403)

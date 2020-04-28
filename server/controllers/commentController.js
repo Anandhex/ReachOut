@@ -22,19 +22,21 @@ exports.addComment = catchAsync(async (req, res, next) => {
   req.body.userId = req.user._id;
   req.body.postId = req.params.postId;
   const resp = await axios.get(
-    `http://127.0.0.1:5001/predict-sentiment?comment=${req.body.commentText}`
+    `http://127.0.0.1:5001/predict-sentiment?comment=${encodeURI(
+      req.body.commentText
+    )}`
   );
-  if (resp.data.Sentiment === 'Positive') {
-    const comment = await Comment.create(req.body);
-    let post = await Post.findById(req.body.postId);
-    post.comments = [...post.comments, comment._id];
-    post = await Post.findByIdAndUpdate(post._id, post, { new: true }).populate(
-      'comments'
-    );
-    res.status(201).json({ status: 'success', data: { data: post } });
-  } else {
-    return next(new AppError('Comment is inappropriate', 403));
+  const comment = await Comment.create(req.body);
+  let post = await Post.findById(req.body.postId);
+  post.comments = [...post.comments, comment._id];
+  post = await Post.findByIdAndUpdate(post._id, post, { new: true }).populate(
+    'comments'
+  );
+  let message;
+  if (resp.data.Sentiment === 'Negative') {
+    message = 'Please refrain from typing such post/comments';
   }
+  res.status(201).json({ status: 'success', data: { data: post, message } });
 });
 
 exports.updateComment = catchAsync(async (req, res, next) => {
@@ -42,21 +44,25 @@ exports.updateComment = catchAsync(async (req, res, next) => {
   if (comment) {
     if (req.user._id.equals(comment.userId)) {
       const resp = await axios.get(
-        `http://127.0.0.1:5001/predict-sentiment?comment=${req.body.commentText}`
+        `http://127.0.0.1:5001/predict-sentiment?comment=${encodeURI(
+          req.body.commentText
+        )}`
       );
-      if (resp.data.Sentiment === 'Positive') {
-        comment = await Comment.findByIdAndUpdate(
-          req.params.commentId,
-          req.body,
-          {
-            new: true
-          }
-        );
-        let post = await Post.findById(comment.postId).populate('comments');
-        res.status(200).json({ status: 'success', data: { data: post } });
-      } else {
-        return next(new AppError('Comment is inappropriate', 403));
+      let message;
+      if (resp.data.Sentiment === 'Negative') {
+        message = 'Please refrain from typing such post/comments';
       }
+      comment = await Comment.findByIdAndUpdate(
+        req.params.commentId,
+        req.body,
+        {
+          new: true
+        }
+      );
+      let post = await Post.findById(comment.postId).populate('comments');
+      res
+        .status(200)
+        .json({ status: 'success', data: { data: post, message } });
     } else {
       next(new AppError('Unauthorized. Please login to update the post', 403));
     }

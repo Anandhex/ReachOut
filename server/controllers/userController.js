@@ -186,6 +186,12 @@ exports.uploadProfileImg = catchAsync(async (req, res, next) => {
   );
 });
 
+exports.getUserFollower = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+  const userFollower = await User.find({ friends: userId });
+  res.status(200).json({ status: 'success', data: { data: userFollower } });
+});
+
 exports.getUserStats = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.userId);
   const userStats = await Post.aggregate([
